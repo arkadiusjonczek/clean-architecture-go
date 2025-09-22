@@ -2,15 +2,25 @@ package basket
 
 import "fmt"
 
-func NewBasket(ID string, UserID string) (*Basket, error) {
-	if ID == "" {
-		return nil, fmt.Errorf("ID cannot be empty")
-	} else if UserID == "" {
+type BasketFactory interface {
+	NewBasket(UserID string) (*Basket, error)
+}
+
+var _ BasketFactory = (*BasketFactoryImpl)(nil)
+
+type BasketFactoryImpl struct {
+}
+
+func NewBasketFactory() *BasketFactoryImpl {
+	return &BasketFactoryImpl{}
+}
+
+func (factory *BasketFactoryImpl) NewBasket(UserID string) (*Basket, error) {
+	if UserID == "" {
 		return nil, fmt.Errorf("UserID cannot be empty")
 	}
 
 	return &Basket{
-		ID:     ID,
 		UserID: UserID,
 		Items:  make(map[string]*BasketItem),
 	}, nil

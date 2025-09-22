@@ -7,3 +7,12 @@ type BasketRepository interface {
 	FindByUserId(userId string) (*Basket, error)
 	Save(basket *Basket) (string, error)
 }
+
+var _ error = (*BasketNotFoundError)(nil)
+
+type BasketNotFoundError struct {
+}
+
+func (err *BasketNotFoundError) Error() string {
+	return "basket not found"
+}

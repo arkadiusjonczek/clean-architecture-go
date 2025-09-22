@@ -11,6 +11,6 @@ type Basket struct {
 }
 
 type BasketItem struct {
-	Product warehouse.Product
+	Product *warehouse.Product
 	Count   int
 }
