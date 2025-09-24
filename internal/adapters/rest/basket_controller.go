@@ -9,11 +9,13 @@ import (
 )
 
 type BasketController interface {
-	ShowBasket()
-	ClearBasket()
-	AddProduct()
-	RemoveProduct()
+	ShowBasket(c *gin.Context)
+	ClearBasket(c *gin.Context)
+	AddProduct(c *gin.Context)
+	RemoveProduct(c *gin.Context)
 }
+
+var _ BasketController = (*BasketControllerImpl)(nil)
 
 type BasketControllerImpl struct {
 	usecases.ShowBasketUseCase
@@ -34,15 +36,6 @@ func NewBasketController(
 		AddProductUseCase:    addProductUseCase,
 		RemoveProductUseCase: removeProductUseCase,
 	}
-}
-
-func (controller *BasketControllerImpl) Configure(router gin.IRouter) {
-	router.GET("/basket", controller.ShowBasket)
-	router.DELETE("/basket", controller.ClearBasket)
-	router.POST("/basket/:productID", controller.AddProduct)
-	router.POST("/basket/:productID/:count", controller.AddProduct)
-	router.DELETE("/basket/:productID", controller.RemoveProduct)
-	router.DELETE("/basket/:productID/:count", controller.RemoveProduct)
 }
 
 func (controller *BasketControllerImpl) ShowBasket(c *gin.Context) {

@@ -73,7 +73,9 @@ func startHTTPServer() {
 	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketService, basketRepository, productRepository)
 
 	basketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, removeProductUseCase)
-	basketController.Configure(router)
+
+	basketControllerRouter := rest.NewBasketControllerRouter(basketController)
+	basketControllerRouter.RegisterRoutes(router)
 
 	httpServer := &http.Server{
 		Addr:    "localhost:8080",
