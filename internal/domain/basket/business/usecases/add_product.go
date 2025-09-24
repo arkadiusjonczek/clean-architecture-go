@@ -73,11 +73,9 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 		return nil, productRepositoryErr
 	}
 
-	//basketItemCount := input.Count
-	//// TODO: check for product stock in warehouse
-	//if product.Stock < basketItemCount {
-	//	return nil, fmt.Errorf("product stock is not enough")
-	//}
+	if input.Count >= 0 && product.Stock <= 0 {
+		return nil, fmt.Errorf("product %s is out of stock", input.ProductID)
+	}
 
 	basketItem, basketItemExists := userBasket.Items[input.ProductID]
 	if !basketItemExists {
@@ -89,7 +87,15 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 		userBasket.Items[input.ProductID] = basketItem
 	}
 
-	basketItem.Count += input.Count
+	var actions map[string]string
+	if product.Stock < basketItem.Count+input.Count {
+		basketItem.Count = product.Stock
+		actions = map[string]string{
+			"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
+		}
+	} else {
+		basketItem.Count += input.Count
+	}
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
 	if basketRepositorySaveErr != nil {
@@ -103,7 +109,7 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 
 	output := &AddProductUseCaseOutput{
 		UserBasket: userBasketDTO,
-		Actions:    map[string]string{},
+		Actions:    actions,
 	}
 
 	return output, nil
