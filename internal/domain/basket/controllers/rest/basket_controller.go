@@ -57,7 +57,7 @@ func (controller *BasketControllerImpl) ShowBasket(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, output.UserBasket)
+	c.JSON(200, output.UserBasketDTO)
 }
 
 func (controller *BasketControllerImpl) ClearBasket(c *gin.Context) {

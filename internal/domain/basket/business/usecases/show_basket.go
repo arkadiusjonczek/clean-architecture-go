@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 )
 
@@ -13,23 +13,25 @@ type ShowBasketUseCaseInput struct {
 }
 
 type ShowBasketUseCaseOutput struct {
-	UserBasket *entities.Basket
+	UserBasketDTO *dto.BasketDTO
 }
 
 type ShowBasketUseCase interface {
 	Execute(input *ShowBasketUseCaseInput) (*ShowBasketUseCaseOutput, error)
 }
 
-func NewShowBasketUseCaseImpl(basketService helper.BasketCreatorService) ShowBasketUseCase {
+func NewShowBasketUseCaseImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService) ShowBasketUseCase {
 	return &ShowBasketUseCaseImpl{
-		basketService: basketService,
+		basketService:       basketService,
+		basketOutputService: basketOutputService,
 	}
 }
 
 var _ ShowBasketUseCase = (*ShowBasketUseCaseImpl)(nil)
 
 type ShowBasketUseCaseImpl struct {
-	basketService helper.BasketCreatorService
+	basketService       helper.BasketCreatorService
+	basketOutputService helper.BasketOutputService
 }
 
 func (useCase *ShowBasketUseCaseImpl) validate(input *ShowBasketUseCaseInput) error {
@@ -53,8 +55,13 @@ func (useCase *ShowBasketUseCaseImpl) Execute(input *ShowBasketUseCaseInput) (*S
 		return nil, err
 	}
 
+	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
+	if basketOutputServiceErr != nil {
+		return nil, basketOutputServiceErr
+	}
+
 	output := &ShowBasketUseCaseOutput{
-		UserBasket: userBasket,
+		UserBasketDTO: userBasketDTO,
 	}
 
 	log.Printf("output: %v", output)

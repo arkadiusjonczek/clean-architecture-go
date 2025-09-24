@@ -2,7 +2,6 @@ package inmemory
 
 import (
 	"fmt"
-
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
@@ -18,10 +17,6 @@ func NewInMemoryProductRepository() warehouse.ProductRepository {
 	}
 }
 
-func (repository *InMemoryProductRepository) Save(product *warehouse.Product) {
-	repository.products[product.ID] = product
-}
-
 func (repository *InMemoryProductRepository) Find(id string) (*warehouse.Product, error) {
 	product, productExists := repository.products[id]
 	if !productExists {
@@ -29,4 +24,18 @@ func (repository *InMemoryProductRepository) Find(id string) (*warehouse.Product
 	}
 
 	return product, nil
+}
+
+func (repository *InMemoryProductRepository) FindAll() []*warehouse.Product {
+	products := []*warehouse.Product{}
+
+	for _, product := range repository.products {
+		products = append(products, product)
+	}
+
+	return products
+}
+
+func (repository *InMemoryProductRepository) Save(product *warehouse.Product) {
+	repository.products[product.ID] = product
 }

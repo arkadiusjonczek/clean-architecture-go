@@ -54,6 +54,20 @@ func (mr *MockProductRepositoryMockRecorder) Find(id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Find", reflect.TypeOf((*MockProductRepository)(nil).Find), id)
 }
 
+// FindAll mocks base method.
+func (m *MockProductRepository) FindAll() []*Product {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAll")
+	ret0, _ := ret[0].([]*Product)
+	return ret0
+}
+
+// FindAll indicates an expected call of FindAll.
+func (mr *MockProductRepositoryMockRecorder) FindAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAll", reflect.TypeOf((*MockProductRepository)(nil).FindAll))
+}
+
 // Save mocks base method.
 func (m *MockProductRepository) Save(product *Product) {
 	m.ctrl.T.Helper()

@@ -62,14 +62,14 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 	basketID := "12345"
 	userID := "1337"
 
-	productID := "1"
-	productName := "Product 1"
+	product1ID := "1"
+	product1Name := "Product 1"
 	product1 := &entities3.Product{
-		ID:    productID,
-		Name:  productName,
+		ID:    product1ID,
+		Name:  product1Name,
 		Stock: 10,
 		Price: &entities3.ProductPrice{
-			Price:    13.37,
+			Value:    13.37,
 			Currency: "EUR",
 		},
 	}
@@ -87,15 +87,16 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 		ID:     basketID,
 		UserID: userID,
 		Items: map[string]*entities.BasketItem{
-			productID: {
-				Product: product1,
-				Count:   1,
+			product1ID: {
+				Product:   product1,
+				ProductID: product1ID,
+				Count:     1,
 			},
 		},
 	}).Return(basketID, nil)
 
 	productRepositoryMock := entities3.NewMockProductRepository(ctrl)
-	productRepositoryMock.EXPECT().Find(productID).Return(product1, nil)
+	productRepositoryMock.EXPECT().Find(product1ID).Return(product1, nil)
 
 	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
 
@@ -103,7 +104,7 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 
 	input := &AddProductUseCaseInput{
 		UserID:    userID,
-		ProductID: productID,
+		ProductID: product1ID,
 		Count:     1,
 	}
 

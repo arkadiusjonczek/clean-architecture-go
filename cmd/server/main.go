@@ -16,6 +16,7 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/controllers/rest"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
+	warehousehelper "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/usecases/helper"
 )
 
 func main() {
@@ -35,7 +36,7 @@ func startHTTPServer() {
 			ID:   "1",
 			Name: "Product 1",
 			Price: &warehouse.ProductPrice{
-				Price:    11.99,
+				Value:    11.99,
 				Currency: "EUR",
 			},
 			Stock: 10,
@@ -46,7 +47,7 @@ func startHTTPServer() {
 			ID:   "2",
 			Name: "Product 2",
 			Price: &warehouse.ProductPrice{
-				Price:    12.99,
+				Value:    12.99,
 				Currency: "EUR",
 			},
 			Stock: 20,
@@ -57,13 +58,18 @@ func startHTTPServer() {
 
 	basketFactory := entities.NewBasketFactory()
 
-	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepository)
+	basketCreatorService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepository)
+	basketOutputService := helper.NewBasketOutputService(productRepository)
 
-	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketService)
-	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketService, basketRepository)
-	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketService, basketRepository, productRepository)
-	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketService, basketRepository, productRepository)
-	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketService, basketRepository, productRepository)
+	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketCreatorService, basketOutputService)
+	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketCreatorService, basketRepository)
+	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)
+	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketCreatorService, basketRepository, productRepository)
+	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)
+
+	productPriceSimulatorService := warehousehelper.NewProductPriceSimulator(productRepository)
+	productPriceSimulatorService.Start()
+	defer productPriceSimulatorService.Stop()
 
 	// create interface adapters
 

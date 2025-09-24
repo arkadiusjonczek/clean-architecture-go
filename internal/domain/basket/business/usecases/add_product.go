@@ -79,8 +79,9 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 	basketItem, basketItemExists := userBasket.Items[input.ProductID]
 	if !basketItemExists {
 		basketItem = &entities.BasketItem{
-			Product: product,
-			Count:   0,
+			Product:   product,
+			ProductID: product.ID,
+			Count:     0,
 		}
 
 		userBasket.Items[input.ProductID] = basketItem
