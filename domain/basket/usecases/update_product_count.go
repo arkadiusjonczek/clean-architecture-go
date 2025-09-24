@@ -8,49 +8,52 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
 )
 
-type RemoveProductUseCaseInput struct {
+type UpdateProductCountUseCaseInput struct {
 	UserID    string
 	ProductID string
+	Count     int
 }
 
-type RemoveProductUseCaseOutput struct {
+type UpdateProductCountUseCaseOutput struct {
 	UserBasket *basket.Basket
 	Actions    map[string]string
 }
 
-type RemoveProductUseCase interface {
-	Execute(input *RemoveProductUseCaseInput) (*RemoveProductUseCaseOutput, error)
+type UpdateProductCountUseCase interface {
+	Execute(input *UpdateProductCountUseCaseInput) (*UpdateProductCountUseCaseOutput, error)
 }
 
-func NewRemoveProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) RemoveProductUseCase {
-	return &RemoveProductUseCaseImpl{
+func NewUpdateProductCountImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) UpdateProductCountUseCase {
+	return &UpdateProductCountUseCaseImpl{
 		basketService:     basketService,
 		basketRepository:  basketRepository,
 		productRepository: productRepository,
 	}
 }
 
-var _ RemoveProductUseCase = (*RemoveProductUseCaseImpl)(nil)
+var _ UpdateProductCountUseCase = (*UpdateProductCountUseCaseImpl)(nil)
 
-type RemoveProductUseCaseImpl struct {
+type UpdateProductCountUseCaseImpl struct {
 	basketService     helper.BasketCreatorService
 	basketRepository  basket.BasketRepository
 	productRepository warehouse.ProductRepository
 }
 
-func (useCase *RemoveProductUseCaseImpl) validate(input *RemoveProductUseCaseInput) error {
+func (useCase *UpdateProductCountUseCaseImpl) validate(input *UpdateProductCountUseCaseInput) error {
 	if input == nil {
 		return fmt.Errorf("input is nil")
 	} else if input.UserID == "" {
 		return fmt.Errorf("UserID is empty")
 	} else if input.ProductID == "" {
 		return fmt.Errorf("ProductID is empty")
+	} else if input.Count <= 0 {
+		return fmt.Errorf("Count is invalid (must be greater than 0)")
 	}
 
 	return nil
 }
 
-func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInput) (*RemoveProductUseCaseOutput, error) {
+func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountUseCaseInput) (*UpdateProductCountUseCaseOutput, error) {
 	// validate input first
 	err := useCase.validate(input)
 	if err != nil {
@@ -62,7 +65,7 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 		return nil, err
 	}
 
-	_, productRepositoryErr := useCase.productRepository.Find(input.ProductID)
+	product, productRepositoryErr := useCase.productRepository.Find(input.ProductID)
 	if productRepositoryErr != nil {
 		return nil, productRepositoryErr
 	}
@@ -73,17 +76,22 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 	//	return nil, fmt.Errorf("product stock is not enough")
 	//}
 
-	_, basketItemExists := userBasket.Items[input.ProductID]
+	basketItem, basketItemExists := userBasket.Items[input.ProductID]
 	if basketItemExists {
-		delete(userBasket.Items, input.ProductID)
-
-		_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
-		if basketRepositorySaveErr != nil {
-			return nil, basketRepositorySaveErr
+		basketItem.Count = input.Count
+	} else {
+		userBasket.Items[input.ProductID] = &basket.BasketItem{
+			Product: product,
+			Count:   input.Count,
 		}
 	}
 
-	output := &RemoveProductUseCaseOutput{
+	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
+	if basketRepositorySaveErr != nil {
+		return nil, basketRepositorySaveErr
+	}
+
+	output := &UpdateProductCountUseCaseOutput{
 		UserBasket: userBasket,
 		Actions:    map[string]string{},
 	}

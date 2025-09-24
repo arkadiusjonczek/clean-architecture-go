@@ -70,9 +70,10 @@ func startHTTPServer() {
 	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketService)
 	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketService, basketRepository)
 	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketService, basketRepository, productRepository)
+	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketService, basketRepository, productRepository)
 	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketService, basketRepository, productRepository)
 
-	basketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, removeProductUseCase)
+	basketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, updateProductCountUseCase, removeProductUseCase)
 
 	basketControllerRouter := rest.NewBasketControllerRouter(basketController)
 	basketControllerRouter.RegisterRoutes(router)

@@ -21,7 +21,7 @@ type ClearBasketUseCase interface {
 	Execute(input *ClearBasketUseCaseInput) (*ClearBasketUseCaseOutput, error)
 }
 
-func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository) *ClearBasketUseCaseImpl {
+func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository) ClearBasketUseCase {
 	return &ClearBasketUseCaseImpl{
 		basketService:    basketService,
 		basketRepository: basketRepository,

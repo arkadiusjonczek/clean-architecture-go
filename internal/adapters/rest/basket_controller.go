@@ -13,6 +13,7 @@ type BasketController interface {
 	ClearBasket(c *gin.Context)
 	AddProduct(c *gin.Context)
 	RemoveProduct(c *gin.Context)
+	UpdateProductCount(c *gin.Context)
 }
 
 var _ BasketController = (*BasketControllerImpl)(nil)
@@ -21,6 +22,7 @@ type BasketControllerImpl struct {
 	usecases.ShowBasketUseCase
 	usecases.ClearBasketUseCase
 	usecases.AddProductUseCase
+	usecases.UpdateProductCountUseCase
 	usecases.RemoveProductUseCase
 }
 
@@ -28,13 +30,15 @@ func NewBasketController(
 	showBasketUseCase usecases.ShowBasketUseCase,
 	clearBasketUseCase usecases.ClearBasketUseCase,
 	addProductUseCase usecases.AddProductUseCase,
+	updateProductCountUseCase usecases.UpdateProductCountUseCase,
 	removeProductUseCase usecases.RemoveProductUseCase,
 ) *BasketControllerImpl {
 	return &BasketControllerImpl{
-		ShowBasketUseCase:    showBasketUseCase,
-		ClearBasketUseCase:   clearBasketUseCase,
-		AddProductUseCase:    addProductUseCase,
-		RemoveProductUseCase: removeProductUseCase,
+		ShowBasketUseCase:         showBasketUseCase,
+		ClearBasketUseCase:        clearBasketUseCase,
+		AddProductUseCase:         addProductUseCase,
+		UpdateProductCountUseCase: updateProductCountUseCase,
+		RemoveProductUseCase:      removeProductUseCase,
 	}
 }
 
@@ -107,13 +111,10 @@ func (controller *BasketControllerImpl) AddProduct(c *gin.Context) {
 	c.JSON(200, output.UserBasket)
 }
 
-func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
+func (controller *BasketControllerImpl) UpdateProductCount(c *gin.Context) {
 	userID := getUserID(c)
 	productID := c.Param("productID")
 	count := c.Param("count")
-	if count == "" {
-		count = "1"
-	}
 
 	countInteger, err := strconv.Atoi(count)
 	if err != nil {
@@ -123,11 +124,31 @@ func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
 		return
 	}
 
+	output, err := controller.UpdateProductCountUseCase.Execute(
+		&usecases.UpdateProductCountUseCaseInput{
+			UserID:    userID,
+			ProductID: productID,
+			Count:     countInteger,
+		},
+	)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, output.UserBasket)
+}
+
+func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
+	userID := getUserID(c)
+	productID := c.Param("productID")
+
 	output, err := controller.RemoveProductUseCase.Execute(
 		&usecases.RemoveProductUseCaseInput{
 			UserID:    userID,
 			ProductID: productID,
-			Count:     countInteger,
 		},
 	)
 	if err != nil {

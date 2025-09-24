@@ -31,8 +31,8 @@ func (controllerRouter *BasketControllerRouterImpl) RegisterRoutes(router gin.IR
 	router.DELETE("/basket", controllerRouter.basketController.ClearBasket)
 	router.POST("/basket/:productID", controllerRouter.basketController.AddProduct)
 	router.POST("/basket/:productID/:count", controllerRouter.basketController.AddProduct)
+	router.PATCH("/basket/:productID/:count", controllerRouter.basketController.UpdateProductCount)
 	router.DELETE("/basket/:productID", controllerRouter.basketController.RemoveProduct)
-	router.DELETE("/basket/:productID/:count", controllerRouter.basketController.RemoveProduct)
 
 	return nil
 }

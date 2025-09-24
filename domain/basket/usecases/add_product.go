@@ -23,7 +23,7 @@ type AddProductUseCase interface {
 	Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error)
 }
 
-func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) *AddProductUseCaseImpl {
+func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
 	return &AddProductUseCaseImpl{
 		basketService:     basketService,
 		basketRepository:  basketRepository,
