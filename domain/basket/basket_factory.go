@@ -11,7 +11,7 @@ var _ BasketFactory = (*BasketFactoryImpl)(nil)
 type BasketFactoryImpl struct {
 }
 
-func NewBasketFactory() *BasketFactoryImpl {
+func NewBasketFactory() BasketFactory {
 	return &BasketFactoryImpl{}
 }
 

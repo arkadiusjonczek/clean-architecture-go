@@ -1,6 +1,7 @@
 package usecases
 
 import (
+	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -12,21 +13,21 @@ import (
 
 func Test_AddProductToBasketUseCase_WrongInput_ReturnsError(t *testing.T) {
 	testCases := map[string]struct {
-		input *AddProductToBasketUseCaseInput
+		input *AddProductUseCaseInput
 	}{
 		"input is nil": {
 			input: nil,
 		},
 		"UserID is empty": {
-			input: &AddProductToBasketUseCaseInput{},
+			input: &AddProductUseCaseInput{},
 		},
 		"ProductID is empty": {
-			input: &AddProductToBasketUseCaseInput{
+			input: &AddProductUseCaseInput{
 				UserID: "1337",
 			},
 		},
 		"Count is invalid": {
-			input: &AddProductToBasketUseCaseInput{
+			input: &AddProductUseCaseInput{
 				UserID:    "1337",
 				ProductID: "1",
 			},
@@ -38,10 +39,13 @@ func Test_AddProductToBasketUseCase_WrongInput_ReturnsError(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
+			basketFactory := basket.NewBasketFactory()
 			basketRepositoryMock := basket.NewMockBasketRepository(ctrl)
 			productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
 
-			useCase := NewAddProductToBasketUseCaseImpl(basketRepositoryMock, productRepositoryMock)
+			basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
+
+			useCase := NewAddProductUseCaseImpl(basketService, basketRepositoryMock, productRepositoryMock)
 
 			_, err := useCase.Execute(testCase.input)
 
@@ -94,9 +98,11 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
 	productRepositoryMock.EXPECT().Find(productID).Return(product1, nil)
 
-	useCase := NewAddProductToBasketUseCaseImpl(basketRepositoryMock, productRepositoryMock)
+	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
 
-	input := &AddProductToBasketUseCaseInput{
+	useCase := NewAddProductUseCaseImpl(basketService, basketRepositoryMock, productRepositoryMock)
+
+	input := &AddProductUseCaseInput{
 		UserID:    userID,
 		ProductID: productID,
 		Count:     1,

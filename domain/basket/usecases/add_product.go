@@ -1,43 +1,45 @@
 package usecases
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
 )
 
-type AddProductToBasketUseCaseInput struct {
+type AddProductUseCaseInput struct {
 	UserID    string
 	ProductID string
 	Count     int
 }
 
-type AddProductToBasketUseCaseOutput struct {
-	actions map[string]string
+type AddProductUseCaseOutput struct {
+	UserBasket *basket.Basket
+	Actions    map[string]string
 }
 
-type AddProductToBasketUseCase interface {
-	Execute(input *AddProductToBasketUseCaseInput) (*AddProductToBasketUseCaseOutput, error)
+type AddProductUseCase interface {
+	Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error)
 }
 
-func NewAddProductToBasketUseCaseImpl(basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) *AddProductToBasketUseCaseImpl {
-	return &AddProductToBasketUseCaseImpl{
+func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) *AddProductUseCaseImpl {
+	return &AddProductUseCaseImpl{
+		basketService:     basketService,
 		basketRepository:  basketRepository,
 		productRepository: productRepository,
 	}
 }
 
-var _ AddProductToBasketUseCase = (*AddProductToBasketUseCaseImpl)(nil)
+var _ AddProductUseCase = (*AddProductUseCaseImpl)(nil)
 
-type AddProductToBasketUseCaseImpl struct {
-	basketFactory     basket.BasketFactory
+type AddProductUseCaseImpl struct {
+	basketService     helper.BasketCreatorService
 	basketRepository  basket.BasketRepository
 	productRepository warehouse.ProductRepository
 }
 
-func (useCase *AddProductToBasketUseCaseImpl) validate(input *AddProductToBasketUseCaseInput) error {
+func (useCase *AddProductUseCaseImpl) validate(input *AddProductUseCaseInput) error {
 	if input == nil {
 		return fmt.Errorf("input is nil")
 	} else if input.UserID == "" {
@@ -51,33 +53,16 @@ func (useCase *AddProductToBasketUseCaseImpl) validate(input *AddProductToBasket
 	return nil
 }
 
-func (useCase *AddProductToBasketUseCaseImpl) Execute(input *AddProductToBasketUseCaseInput) (*AddProductToBasketUseCaseOutput, error) {
+func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error) {
 	// validate input first
 	err := useCase.validate(input)
 	if err != nil {
 		return nil, fmt.Errorf("input validation error: %w", err)
 	}
 
-	// find the basket of the user
-	userBasket, basketRepositoryErr := useCase.basketRepository.FindByUserId(input.UserID)
-	if basketRepositoryErr != nil {
-		// if the user has no basket yet, create it
-		if errors.Is(basketRepositoryErr, &basket.BasketNotFoundError{}) {
-			basket, newBasketErr := useCase.basketFactory.NewBasket(input.UserID)
-			if newBasketErr != nil {
-				return nil, newBasketErr
-			}
-			userBasketID, saveBasketErr := useCase.basketRepository.Save(basket)
-			if saveBasketErr != nil {
-				return nil, saveBasketErr
-			}
-			userBasket, basketRepositoryErr = useCase.basketRepository.Find(userBasketID)
-			if basketRepositoryErr != nil {
-				return nil, basketRepositoryErr
-			}
-		}
-
-		return nil, basketRepositoryErr
+	userBasket, userBasketErr := useCase.basketService.FindOrCreate(input.UserID)
+	if userBasketErr != nil {
+		return nil, err
 	}
 
 	product, productRepositoryErr := useCase.productRepository.Find(input.ProductID)
@@ -108,7 +93,10 @@ func (useCase *AddProductToBasketUseCaseImpl) Execute(input *AddProductToBasketU
 		return nil, basketRepositorySaveErr
 	}
 
-	output := &AddProductToBasketUseCaseOutput{}
+	output := &AddProductUseCaseOutput{
+		UserBasket: userBasket,
+		Actions:    map[string]string{},
+	}
 
 	return output, nil
 }

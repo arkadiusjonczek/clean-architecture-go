@@ -4,7 +4,7 @@ package basket
 
 type BasketRepository interface {
 	Find(id string) (*Basket, error)
-	FindByUserId(userId string) (*Basket, error)
+	FindByUserId(userId string) (*Basket, error) // special function
 	Save(basket *Basket) (string, error)
 }
 
