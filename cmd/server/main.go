@@ -2,18 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/gin-gonic/gin"
+
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases"
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/adapters/rest"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/drivers/inmemory"
-	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func main() {
