@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
@@ -15,28 +16,30 @@ type UpdateProductCountUseCaseInput struct {
 }
 
 type UpdateProductCountUseCaseOutput struct {
-	UserBasket *entities.Basket
-	Actions    map[string]string
+	UserBasketDTO *dto.BasketDTO
+	Actions       map[string]string
 }
 
 type UpdateProductCountUseCase interface {
 	Execute(input *UpdateProductCountUseCaseInput) (*UpdateProductCountUseCaseOutput, error)
 }
 
-func NewUpdateProductCountImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) UpdateProductCountUseCase {
+func NewUpdateProductCountImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) UpdateProductCountUseCase {
 	return &UpdateProductCountUseCaseImpl{
-		basketService:     basketService,
-		basketRepository:  basketRepository,
-		productRepository: productRepository,
+		basketService:       basketService,
+		basketOutputService: basketOutputService,
+		basketRepository:    basketRepository,
+		productRepository:   productRepository,
 	}
 }
 
 var _ UpdateProductCountUseCase = (*UpdateProductCountUseCaseImpl)(nil)
 
 type UpdateProductCountUseCaseImpl struct {
-	basketService     helper.BasketCreatorService
-	basketRepository  entities.BasketRepository
-	productRepository warehouse.ProductRepository
+	basketService       helper.BasketCreatorService
+	basketOutputService helper.BasketOutputService
+	basketRepository    entities.BasketRepository
+	productRepository   warehouse.ProductRepository
 }
 
 func (useCase *UpdateProductCountUseCaseImpl) validate(input *UpdateProductCountUseCaseInput) error {
@@ -91,9 +94,14 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 		return nil, basketRepositorySaveErr
 	}
 
+	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
+	if basketOutputServiceErr != nil {
+		return nil, basketOutputServiceErr
+	}
+
 	output := &UpdateProductCountUseCaseOutput{
-		UserBasket: userBasket,
-		Actions:    map[string]string{},
+		UserBasketDTO: userBasketDTO,
+		Actions:       map[string]string{},
 	}
 
 	return output, nil

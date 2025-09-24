@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
@@ -15,28 +16,30 @@ type AddProductUseCaseInput struct {
 }
 
 type AddProductUseCaseOutput struct {
-	UserBasket *entities.Basket
-	Actions    map[string]string
+	UserBasketDTO *dto.BasketDTO
+	Actions       map[string]string
 }
 
 type AddProductUseCase interface {
 	Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error)
 }
 
-func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
+func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
 	return &AddProductUseCaseImpl{
-		basketService:     basketService,
-		basketRepository:  basketRepository,
-		productRepository: productRepository,
+		basketService:       basketService,
+		basketOutputService: basketOutputService,
+		basketRepository:    basketRepository,
+		productRepository:   productRepository,
 	}
 }
 
 var _ AddProductUseCase = (*AddProductUseCaseImpl)(nil)
 
 type AddProductUseCaseImpl struct {
-	basketService     helper.BasketCreatorService
-	basketRepository  entities.BasketRepository
-	productRepository warehouse.ProductRepository
+	basketService       helper.BasketCreatorService
+	basketOutputService helper.BasketOutputService
+	basketRepository    entities.BasketRepository
+	productRepository   warehouse.ProductRepository
 }
 
 func (useCase *AddProductUseCaseImpl) validate(input *AddProductUseCaseInput) error {
@@ -94,9 +97,14 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 		return nil, basketRepositorySaveErr
 	}
 
+	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
+	if basketOutputServiceErr != nil {
+		return nil, basketOutputServiceErr
+	}
+
 	output := &AddProductUseCaseOutput{
-		UserBasket: userBasket,
-		Actions:    map[string]string{},
+		UserBasketDTO: userBasketDTO,
+		Actions:       map[string]string{},
 	}
 
 	return output, nil

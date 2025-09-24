@@ -108,7 +108,7 @@ func (controller *BasketControllerImpl) AddProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, output.UserBasket)
+	c.JSON(200, output.UserBasketDTO)
 }
 
 func (controller *BasketControllerImpl) UpdateProductCount(c *gin.Context) {
@@ -138,7 +138,7 @@ func (controller *BasketControllerImpl) UpdateProductCount(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, output.UserBasket)
+	c.JSON(200, output.UserBasketDTO)
 }
 
 func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
@@ -158,5 +158,5 @@ func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, output.UserBasket)
+	c.JSON(200, output.UserBasketDTO)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
@@ -14,28 +15,30 @@ type RemoveProductUseCaseInput struct {
 }
 
 type RemoveProductUseCaseOutput struct {
-	UserBasket *entities.Basket
-	Actions    map[string]string
+	UserBasketDTO *dto.BasketDTO
+	Actions       map[string]string
 }
 
 type RemoveProductUseCase interface {
 	Execute(input *RemoveProductUseCaseInput) (*RemoveProductUseCaseOutput, error)
 }
 
-func NewRemoveProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) RemoveProductUseCase {
+func NewRemoveProductUseCaseImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) RemoveProductUseCase {
 	return &RemoveProductUseCaseImpl{
-		basketService:     basketService,
-		basketRepository:  basketRepository,
-		productRepository: productRepository,
+		basketService:       basketService,
+		basketOutputService: basketOutputService,
+		basketRepository:    basketRepository,
+		productRepository:   productRepository,
 	}
 }
 
 var _ RemoveProductUseCase = (*RemoveProductUseCaseImpl)(nil)
 
 type RemoveProductUseCaseImpl struct {
-	basketService     helper.BasketCreatorService
-	basketRepository  entities.BasketRepository
-	productRepository warehouse.ProductRepository
+	basketService       helper.BasketCreatorService
+	basketOutputService helper.BasketOutputService
+	basketRepository    entities.BasketRepository
+	productRepository   warehouse.ProductRepository
 }
 
 func (useCase *RemoveProductUseCaseImpl) validate(input *RemoveProductUseCaseInput) error {
@@ -83,9 +86,14 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 		}
 	}
 
+	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
+	if basketOutputServiceErr != nil {
+		return nil, basketOutputServiceErr
+	}
+
 	output := &RemoveProductUseCaseOutput{
-		UserBasket: userBasket,
-		Actions:    map[string]string{},
+		UserBasketDTO: userBasketDTO,
+		Actions:       map[string]string{},
 	}
 
 	return output, nil

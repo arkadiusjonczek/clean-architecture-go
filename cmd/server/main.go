@@ -63,9 +63,9 @@ func startHTTPServer() {
 
 	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketCreatorService, basketOutputService)
 	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketCreatorService, basketOutputService, basketRepository)
-	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)
-	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketCreatorService, basketRepository, productRepository)
-	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)
+	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepository, productRepository)
+	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketCreatorService, basketOutputService, basketRepository, productRepository)
+	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepository, productRepository)
 
 	productPriceSimulatorService := warehousehelper.NewProductPriceSimulator(productRepository)
 	productPriceSimulatorService.Start()
