@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases"
 )
 
 type BasketController interface {

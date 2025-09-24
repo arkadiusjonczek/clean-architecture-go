@@ -1,7 +1,7 @@
 package basket
 
 import (
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
 )
 
 type Basket struct {

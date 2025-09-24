@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
 )
 
 var _ basket.BasketRepository = (*InMemoryBasketRepository)(nil)

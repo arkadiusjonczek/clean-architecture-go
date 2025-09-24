@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
 )
 
 type ShowBasketUseCaseInput struct {

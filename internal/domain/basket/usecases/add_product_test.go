@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
 )
 
 func Test_AddProductToBasketUseCase_WrongInput_ReturnsError(t *testing.T) {

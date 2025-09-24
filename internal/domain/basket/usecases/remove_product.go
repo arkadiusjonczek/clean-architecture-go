@@ -3,9 +3,9 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
 )
 
 type RemoveProductUseCaseInput struct {
