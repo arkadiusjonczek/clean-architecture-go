@@ -62,7 +62,7 @@ func startHTTPServer() {
 	basketOutputService := helper.NewBasketOutputService(productRepository)
 
 	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketCreatorService, basketOutputService)
-	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketCreatorService, basketRepository)
+	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketCreatorService, basketOutputService, basketRepository)
 	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)
 	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketCreatorService, basketRepository, productRepository)
 	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketCreatorService, basketRepository, productRepository)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 )
 
@@ -14,25 +15,27 @@ type ClearBasketUseCaseInput struct {
 }
 
 type ClearBasketUseCaseOutput struct {
-	UserBasket *entities.Basket
+	UserBasketDTO *dto.BasketDTO
 }
 
 type ClearBasketUseCase interface {
 	Execute(input *ClearBasketUseCaseInput) (*ClearBasketUseCaseOutput, error)
 }
 
-func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository) ClearBasketUseCase {
+func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository) ClearBasketUseCase {
 	return &ClearBasketUseCaseImpl{
-		basketService:    basketService,
-		basketRepository: basketRepository,
+		basketService:       basketService,
+		basketOutputService: basketOutputService,
+		basketRepository:    basketRepository,
 	}
 }
 
 var _ ClearBasketUseCase = (*ClearBasketUseCaseImpl)(nil)
 
 type ClearBasketUseCaseImpl struct {
-	basketService    helper.BasketCreatorService
-	basketRepository entities.BasketRepository
+	basketService       helper.BasketCreatorService
+	basketOutputService helper.BasketOutputService
+	basketRepository    entities.BasketRepository
 }
 
 func (useCase *ClearBasketUseCaseImpl) validate(input *ClearBasketUseCaseInput) error {
@@ -64,8 +67,13 @@ func (useCase *ClearBasketUseCaseImpl) Execute(input *ClearBasketUseCaseInput) (
 		return nil, basketRepositorySaveErr
 	}
 
+	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
+	if basketOutputServiceErr != nil {
+		return nil, basketOutputServiceErr
+	}
+
 	output := &ClearBasketUseCaseOutput{
-		UserBasket: userBasket,
+		UserBasketDTO: userBasketDTO,
 	}
 
 	return output, nil
