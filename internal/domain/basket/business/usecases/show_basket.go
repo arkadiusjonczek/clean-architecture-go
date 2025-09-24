@@ -13,7 +13,7 @@ type ShowBasketUseCaseInput struct {
 }
 
 type ShowBasketUseCaseOutput struct {
-	UserBasketDTO *dto.BasketDTO
+	UserBasket *dto.BasketDTO
 }
 
 type ShowBasketUseCase interface {
@@ -61,7 +61,7 @@ func (useCase *ShowBasketUseCaseImpl) Execute(input *ShowBasketUseCaseInput) (*S
 	}
 
 	output := &ShowBasketUseCaseOutput{
-		UserBasketDTO: userBasketDTO,
+		UserBasket: userBasketDTO,
 	}
 
 	log.Printf("output: %v", output)

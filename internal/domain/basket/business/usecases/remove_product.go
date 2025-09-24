@@ -15,8 +15,8 @@ type RemoveProductUseCaseInput struct {
 }
 
 type RemoveProductUseCaseOutput struct {
-	UserBasketDTO *dto.BasketDTO
-	Actions       map[string]string
+	UserBasket *dto.BasketDTO
+	Actions    map[string]string
 }
 
 type RemoveProductUseCase interface {
@@ -92,8 +92,8 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 	}
 
 	output := &RemoveProductUseCaseOutput{
-		UserBasketDTO: userBasketDTO,
-		Actions:       map[string]string{},
+		UserBasket: userBasketDTO,
+		Actions:    map[string]string{},
 	}
 
 	return output, nil

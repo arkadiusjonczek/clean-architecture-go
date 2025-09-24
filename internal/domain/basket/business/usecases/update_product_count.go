@@ -16,8 +16,8 @@ type UpdateProductCountUseCaseInput struct {
 }
 
 type UpdateProductCountUseCaseOutput struct {
-	UserBasketDTO *dto.BasketDTO
-	Actions       map[string]string
+	UserBasket *dto.BasketDTO
+	Actions    map[string]string
 }
 
 type UpdateProductCountUseCase interface {
@@ -49,8 +49,8 @@ func (useCase *UpdateProductCountUseCaseImpl) validate(input *UpdateProductCount
 		return fmt.Errorf("UserID is empty")
 	} else if input.ProductID == "" {
 		return fmt.Errorf("ProductID is empty")
-	} else if input.Count <= 0 {
-		return fmt.Errorf("Count is invalid (must be greater than 0)")
+	} else if input.Count < 0 {
+		return fmt.Errorf("Count is invalid (must be 0 or greater)")
 	}
 
 	return nil
@@ -73,19 +73,39 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 		return nil, productRepositoryErr
 	}
 
-	//basketItemCount := input.Count
-	//// TODO: check for product stock in warehouse
-	//if product.Stock < basketItemCount {
-	//	return nil, fmt.Errorf("product stock is not enough")
-	//}
+	if input.Count >= 0 && product.Stock <= 0 {
+		return nil, fmt.Errorf("product %s is out of stock", input.ProductID)
+	}
 
+	var actions map[string]string
 	basketItem, basketItemExists := userBasket.Items[input.ProductID]
 	if basketItemExists {
-		basketItem.Count = input.Count
+		if input.Count == 0 {
+			delete(userBasket.Items, input.ProductID)
+		} else if product.Stock < basketItem.Count+input.Count {
+			basketItem.Count = product.Stock
+			actions = map[string]string{
+				"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
+			}
+		} else {
+			basketItem.Count = input.Count
+		}
+
 	} else {
-		userBasket.Items[input.ProductID] = &entities.BasketItem{
-			ProductID: product.ID,
-			Count:     input.Count,
+		if input.Count > 0 {
+			count := input.Count
+			if product.Stock < input.Count {
+				count = product.Stock
+				actions = map[string]string{
+					"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
+				}
+			} else {
+				count = input.Count
+			}
+			userBasket.Items[input.ProductID] = &entities.BasketItem{
+				ProductID: product.ID,
+				Count:     count,
+			}
 		}
 	}
 
@@ -100,8 +120,8 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 	}
 
 	output := &UpdateProductCountUseCaseOutput{
-		UserBasketDTO: userBasketDTO,
-		Actions:       map[string]string{},
+		UserBasket: userBasketDTO,
+		Actions:    actions,
 	}
 
 	return output, nil

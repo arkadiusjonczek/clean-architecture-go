@@ -15,7 +15,7 @@ type ClearBasketUseCaseInput struct {
 }
 
 type ClearBasketUseCaseOutput struct {
-	UserBasketDTO *dto.BasketDTO
+	UserBasket *dto.BasketDTO
 }
 
 type ClearBasketUseCase interface {
@@ -73,7 +73,7 @@ func (useCase *ClearBasketUseCaseImpl) Execute(input *ClearBasketUseCaseInput) (
 	}
 
 	output := &ClearBasketUseCaseOutput{
-		UserBasketDTO: userBasketDTO,
+		UserBasket: userBasketDTO,
 	}
 
 	return output, nil
