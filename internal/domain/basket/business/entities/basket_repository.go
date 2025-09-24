@@ -1,6 +1,6 @@
-package basket
+package entities
 
-//go:generate mockgen -source=basket_repository.go -destination=basket_repository_mock.go -package=basket
+//go:generate mockgen -source=basket_repository.go -destination=basket_repository_mock.go -package=entities
 
 type BasketRepository interface {
 	Find(id string) (*Basket, error)

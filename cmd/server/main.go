@@ -10,12 +10,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/adapters/rest"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/drivers/inmemory"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/controllers/rest"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 func main() {
@@ -38,7 +38,7 @@ func startHTTPServer() {
 
 	// create dependencies
 
-	basketFactory := basket.NewBasketFactory()
+	basketFactory := entities.NewBasketFactory()
 	basketRepository := inmemory.NewInMemoryBasketRepository()
 
 	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepository)

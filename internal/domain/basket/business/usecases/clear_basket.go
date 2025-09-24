@@ -3,8 +3,8 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 )
 
 type ClearBasketUseCaseInput struct {
@@ -14,14 +14,14 @@ type ClearBasketUseCaseInput struct {
 }
 
 type ClearBasketUseCaseOutput struct {
-	UserBasket *basket.Basket
+	UserBasket *entities.Basket
 }
 
 type ClearBasketUseCase interface {
 	Execute(input *ClearBasketUseCaseInput) (*ClearBasketUseCaseOutput, error)
 }
 
-func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository) ClearBasketUseCase {
+func NewClearBasketUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository) ClearBasketUseCase {
 	return &ClearBasketUseCaseImpl{
 		basketService:    basketService,
 		basketRepository: basketRepository,
@@ -32,7 +32,7 @@ var _ ClearBasketUseCase = (*ClearBasketUseCaseImpl)(nil)
 
 type ClearBasketUseCaseImpl struct {
 	basketService    helper.BasketCreatorService
-	basketRepository basket.BasketRepository
+	basketRepository entities.BasketRepository
 }
 
 func (useCase *ClearBasketUseCaseImpl) validate(input *ClearBasketUseCaseInput) error {
@@ -57,7 +57,7 @@ func (useCase *ClearBasketUseCaseImpl) Execute(input *ClearBasketUseCaseInput) (
 	}
 
 	// clear the basket by replacing the map
-	userBasket.Items = make(map[string]*basket.BasketItem)
+	userBasket.Items = make(map[string]*entities.BasketItem)
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
 	if basketRepositorySaveErr != nil {

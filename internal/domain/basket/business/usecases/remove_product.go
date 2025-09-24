@@ -3,9 +3,9 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 type RemoveProductUseCaseInput struct {
@@ -14,7 +14,7 @@ type RemoveProductUseCaseInput struct {
 }
 
 type RemoveProductUseCaseOutput struct {
-	UserBasket *basket.Basket
+	UserBasket *entities.Basket
 	Actions    map[string]string
 }
 
@@ -22,7 +22,7 @@ type RemoveProductUseCase interface {
 	Execute(input *RemoveProductUseCaseInput) (*RemoveProductUseCaseOutput, error)
 }
 
-func NewRemoveProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) RemoveProductUseCase {
+func NewRemoveProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) RemoveProductUseCase {
 	return &RemoveProductUseCaseImpl{
 		basketService:     basketService,
 		basketRepository:  basketRepository,
@@ -34,7 +34,7 @@ var _ RemoveProductUseCase = (*RemoveProductUseCaseImpl)(nil)
 
 type RemoveProductUseCaseImpl struct {
 	basketService     helper.BasketCreatorService
-	basketRepository  basket.BasketRepository
+	basketRepository  entities.BasketRepository
 	productRepository warehouse.ProductRepository
 }
 

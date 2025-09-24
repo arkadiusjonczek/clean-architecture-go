@@ -3,9 +3,9 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 type UpdateProductCountUseCaseInput struct {
@@ -15,7 +15,7 @@ type UpdateProductCountUseCaseInput struct {
 }
 
 type UpdateProductCountUseCaseOutput struct {
-	UserBasket *basket.Basket
+	UserBasket *entities.Basket
 	Actions    map[string]string
 }
 
@@ -23,7 +23,7 @@ type UpdateProductCountUseCase interface {
 	Execute(input *UpdateProductCountUseCaseInput) (*UpdateProductCountUseCaseOutput, error)
 }
 
-func NewUpdateProductCountImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) UpdateProductCountUseCase {
+func NewUpdateProductCountImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) UpdateProductCountUseCase {
 	return &UpdateProductCountUseCaseImpl{
 		basketService:     basketService,
 		basketRepository:  basketRepository,
@@ -35,7 +35,7 @@ var _ UpdateProductCountUseCase = (*UpdateProductCountUseCaseImpl)(nil)
 
 type UpdateProductCountUseCaseImpl struct {
 	basketService     helper.BasketCreatorService
-	basketRepository  basket.BasketRepository
+	basketRepository  entities.BasketRepository
 	productRepository warehouse.ProductRepository
 }
 
@@ -80,7 +80,7 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 	if basketItemExists {
 		basketItem.Count = input.Count
 	} else {
-		userBasket.Items[input.ProductID] = &basket.BasketItem{
+		userBasket.Items[input.ProductID] = &entities.BasketItem{
 			Product: product,
 			Count:   input.Count,
 		}

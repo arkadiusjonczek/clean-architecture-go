@@ -2,22 +2,23 @@ package helper
 
 import (
 	"errors"
-	basket2 "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
+
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 )
 
 // BasketCreatorService used for special business logic to prevent duplicate code
 type BasketCreatorService interface {
-	FindOrCreate(userID string) (*basket2.Basket, error)
+	FindOrCreate(userID string) (*entities.Basket, error)
 }
 
 var _ BasketCreatorService = (*BasketCreatorServiceImpl)(nil)
 
 type BasketCreatorServiceImpl struct {
-	basketFactory    basket2.BasketFactory
-	basketRepository basket2.BasketRepository
+	basketFactory    entities.BasketFactory
+	basketRepository entities.BasketRepository
 }
 
-func NewBasketCreatorServiceImpl(basketFactory basket2.BasketFactory, basketRepository basket2.BasketRepository) BasketCreatorService {
+func NewBasketCreatorServiceImpl(basketFactory entities.BasketFactory, basketRepository entities.BasketRepository) BasketCreatorService {
 	return &BasketCreatorServiceImpl{
 		basketFactory:    basketFactory,
 		basketRepository: basketRepository,
@@ -25,11 +26,11 @@ func NewBasketCreatorServiceImpl(basketFactory basket2.BasketFactory, basketRepo
 }
 
 // FindOrCreate will create a new basket if a basket could not be found for the given userID
-func (service *BasketCreatorServiceImpl) FindOrCreate(userID string) (*basket2.Basket, error) {
+func (service *BasketCreatorServiceImpl) FindOrCreate(userID string) (*entities.Basket, error) {
 	userBasket, basketRepositoryErr := service.basketRepository.FindByUserId(userID)
 	if basketRepositoryErr != nil {
 		// if the user has no basket yet, create it
-		if errors.Is(basketRepositoryErr, &basket2.BasketNotFoundError{}) {
+		if errors.Is(basketRepositoryErr, &entities.BasketNotFoundError{}) {
 			basket, newBasketErr := service.basketFactory.NewBasket(userID)
 			if newBasketErr != nil {
 				return nil, newBasketErr

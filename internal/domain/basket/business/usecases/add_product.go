@@ -3,9 +3,9 @@ package usecases
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 type AddProductUseCaseInput struct {
@@ -15,7 +15,7 @@ type AddProductUseCaseInput struct {
 }
 
 type AddProductUseCaseOutput struct {
-	UserBasket *basket.Basket
+	UserBasket *entities.Basket
 	Actions    map[string]string
 }
 
@@ -23,7 +23,7 @@ type AddProductUseCase interface {
 	Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error)
 }
 
-func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository basket.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
+func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
 	return &AddProductUseCaseImpl{
 		basketService:     basketService,
 		basketRepository:  basketRepository,
@@ -35,7 +35,7 @@ var _ AddProductUseCase = (*AddProductUseCaseImpl)(nil)
 
 type AddProductUseCaseImpl struct {
 	basketService     helper.BasketCreatorService
-	basketRepository  basket.BasketRepository
+	basketRepository  entities.BasketRepository
 	productRepository warehouse.ProductRepository
 }
 
@@ -78,7 +78,7 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 
 	basketItem, basketItemExists := userBasket.Items[input.ProductID]
 	if !basketItemExists {
-		basketItem = &basket.BasketItem{
+		basketItem = &entities.BasketItem{
 			Product: product,
 			Count:   0,
 		}

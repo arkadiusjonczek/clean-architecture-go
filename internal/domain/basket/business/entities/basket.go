@@ -1,7 +1,7 @@
-package basket
+package entities
 
 import (
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 type Basket struct {

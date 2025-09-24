@@ -1,4 +1,4 @@
-package warehouse
+package entities
 
 // ProductPrice is a value object
 type ProductPrice struct {

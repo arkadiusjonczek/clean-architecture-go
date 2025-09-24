@@ -3,7 +3,7 @@ package inmemory
 import (
 	"fmt"
 
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse"
+	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
 var _ warehouse.ProductRepository = (*InMemoryProductRepository)(nil)
