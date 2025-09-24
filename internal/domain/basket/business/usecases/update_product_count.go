@@ -84,8 +84,8 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 		basketItem.Count = input.Count
 	} else {
 		userBasket.Items[input.ProductID] = &entities.BasketItem{
-			Product: product,
-			Count:   input.Count,
+			ProductID: product.ID,
+			Count:     input.Count,
 		}
 	}
 

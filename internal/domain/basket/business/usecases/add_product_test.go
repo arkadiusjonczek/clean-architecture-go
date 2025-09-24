@@ -90,7 +90,6 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 		UserID: userID,
 		Items: map[string]*entities.BasketItem{
 			product1ID: {
-				Product:   product1,
 				ProductID: product1ID,
 				Count:     1,
 			},
