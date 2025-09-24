@@ -25,23 +25,9 @@ func main() {
 func startHTTPServer() {
 	fmt.Println("Starting server...")
 
-	//r := mux.NewRouter()
-	//r.HandleFunc("/", HomeHandler)
-	//http.Handle("/", r)
+	// create drivers
 
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	// create dependencies
-
-	basketFactory := entities.NewBasketFactory()
 	basketRepository := inmemory.NewInMemoryBasketRepository()
-
-	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepository)
 
 	productRepository := inmemory.NewInMemoryProductRepository()
 	productRepository.Save(
@@ -67,16 +53,33 @@ func startHTTPServer() {
 		},
 	)
 
+	// create business logic and inject drivers
+
+	basketFactory := entities.NewBasketFactory()
+
+	basketService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepository)
+
 	showBasketUseCase := usecases.NewShowBasketUseCaseImpl(basketService)
 	clearBasketUseCase := usecases.NewClearBasketUseCaseImpl(basketService, basketRepository)
 	addProductUseCase := usecases.NewAddProductUseCaseImpl(basketService, basketRepository, productRepository)
 	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketService, basketRepository, productRepository)
 	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketService, basketRepository, productRepository)
 
+	// create interface adapters
+
+	router := gin.Default()
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+
 	basketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, updateProductCountUseCase, removeProductUseCase)
 
 	basketControllerRouter := rest.NewBasketControllerRouter(basketController)
 	basketControllerRouter.RegisterRoutes(router)
+
+	// start http server
 
 	httpServer := &http.Server{
 		Addr:    "localhost:8080",
