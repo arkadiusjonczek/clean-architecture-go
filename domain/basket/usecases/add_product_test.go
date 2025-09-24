@@ -1,13 +1,13 @@
 package usecases
 
 import (
-	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket"
+	"github.com/arkadiusjonczek/clean-architecture-go/domain/basket/usecases/helper"
 	"github.com/arkadiusjonczek/clean-architecture-go/domain/warehouse"
 )
 
