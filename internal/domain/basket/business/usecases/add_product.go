@@ -73,7 +73,7 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 		return nil, productRepositoryErr
 	}
 
-	if input.Count >= 0 && product.Stock <= 0 {
+	if product.Stock <= 0 {
 		return nil, fmt.Errorf("product %s is out of stock", input.ProductID)
 	}
 

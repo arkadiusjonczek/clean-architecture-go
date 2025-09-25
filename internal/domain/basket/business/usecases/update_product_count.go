@@ -49,8 +49,8 @@ func (useCase *UpdateProductCountUseCaseImpl) validate(input *UpdateProductCount
 		return fmt.Errorf("UserID is empty")
 	} else if input.ProductID == "" {
 		return fmt.Errorf("ProductID is empty")
-	} else if input.Count < 0 {
-		return fmt.Errorf("Count is invalid (must be 0 or greater)")
+	} else if input.Count <= 0 {
+		return fmt.Errorf("Count is invalid (must be greater than 0)")
 	}
 
 	return nil
@@ -73,40 +73,28 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 		return nil, productRepositoryErr
 	}
 
-	if input.Count >= 0 && product.Stock <= 0 {
+	if product.Stock <= 0 {
 		return nil, fmt.Errorf("product %s is out of stock", input.ProductID)
 	}
 
-	var actions map[string]string
 	basketItem, basketItemExists := userBasket.Items[input.ProductID]
-	if basketItemExists {
-		if input.Count == 0 {
-			delete(userBasket.Items, input.ProductID)
-		} else if product.Stock < basketItem.Count+input.Count {
-			basketItem.Count = product.Stock
-			actions = map[string]string{
-				"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
-			}
-		} else {
-			basketItem.Count = input.Count
+	if !basketItemExists {
+		basketItem = &entities.BasketItem{
+			ProductID: product.ID,
+			Count:     0,
 		}
 
-	} else {
-		if input.Count > 0 {
-			count := input.Count
-			if product.Stock < input.Count {
-				count = product.Stock
-				actions = map[string]string{
-					"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
-				}
-			} else {
-				count = input.Count
-			}
-			userBasket.Items[input.ProductID] = &entities.BasketItem{
-				ProductID: product.ID,
-				Count:     count,
-			}
+		userBasket.Items[input.ProductID] = basketItem
+	}
+
+	var actions map[string]string
+	if product.Stock < basketItem.Count+input.Count {
+		basketItem.Count = product.Stock
+		actions = map[string]string{
+			"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
 		}
+	} else {
+		basketItem.Count += input.Count
 	}
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
