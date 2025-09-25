@@ -10,10 +10,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/rest"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/controllers/rest"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 	warehousehelper "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/usecases/helper"
