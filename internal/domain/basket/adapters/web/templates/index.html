@@ -33,25 +33,25 @@
         <p>The basket is empty.</p>
         {{ end }}
         {{ end }}
+        <script>
+            function clearBasket() {
+                if (!confirm("Are you sure?")) {
+                    return;
+                }
+                const request = new Request("/basket", {method: "DELETE"});
+
+                fetch(request)
+                    .then((response) => {
+                        if (response.status !== 200) {
+                            throw new Error("Something went wrong on API server!");
+                        }
+                        console.debug(response);
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        </script>
     </body>
 </html>
-<script>
-    function clearBasket() {
-        if (!confirm("Are you sure?")) {
-            return;
-        }
-        const request = new Request("/basket", {method: "DELETE"});
-
-        fetch(request)
-            .then((response) => {
-                if (response.status !== 200) {
-                    throw new Error("Something went wrong on API server!");
-                }
-                console.debug(response);
-                location.reload();
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-</script>
