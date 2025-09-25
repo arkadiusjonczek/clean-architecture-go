@@ -1,0 +1,44 @@
+@startuml usecase-diagram
+
+package Ecommerce {
+
+left to right direction
+
+rectangle Customer {
+    actor "Registered User" as u
+    actor Guest as g
+
+}
+
+package Account {
+    usecase "Show Account" as UC0
+}
+
+package Basket {
+    usecase "Clear Basket" as UC5
+    usecase "Delete Product" as UC4
+    usecase "Update Product Count" as UC3
+    usecase "Add Product" as UC2
+    usecase "Show Basket" as UC1
+}
+
+package Warehouse {
+  usecase "Check Product Stock" as UC6
+}
+
+u -|> g
+
+u ---> UC0
+
+g ---> UC1
+g ---> UC2
+g ---> UC3
+g ---> UC4
+g ---> UC5
+
+(UC2) ..> (UC6) : include
+(UC3) ..> (UC6) : include
+
+}
+
+@enduml
