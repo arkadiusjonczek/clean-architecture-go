@@ -12,12 +12,44 @@
         {{ end }}
         {{ if .userBasket }}
         {{ if .userBasket.Items }}
+        <table border="1">
+            <tr>
+                <th>Count</th>
+                <th>Product</th>
+                <th>Price</th>
+            </tr>
         {{ range .userBasket.Items }}
-            <p>{{ .Count }} x {{ .Product.Name }} @ {{ .Product.Price.Value }} {{ .Product.Price.Currency }}</p>
+            <tr>
+                <td>{{ .Count }}</td>
+                <td>{{ .Product.Name }}</td>
+                <td>{{ .Product.Price.Value }} {{ .Product.Price.Currency }}</td>
+            </tr>
         {{ end }}
+        </table>
+        <button onclick="javascript:clearBasket();">Clear</button>
         {{ else }}
         <p>The basket is empty.</p>
         {{ end }}
         {{ end }}
     </body>
 </html>
+<script>
+    function clearBasket() {
+        if (!confirm("Are you sure?")) {
+            return;
+        }
+        const request = new Request("/basket", {method: "DELETE"});
+
+        fetch(request)
+            .then((response) => {
+                if (response.status !== 200) {
+                    throw new Error("Something went wrong on API server!");
+                }
+                console.debug(response);
+                location.reload();
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+</script>

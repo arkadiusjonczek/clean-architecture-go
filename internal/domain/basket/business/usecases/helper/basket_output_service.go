@@ -2,8 +2,6 @@ package helper
 
 import (
 	"fmt"
-	"sort"
-
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
@@ -39,7 +37,7 @@ func (service *BasketOutputServiceImpl) CreateBasketDTO(basket *entities.Basket)
 	for k, _ := range basket.Items {
 		basketItemsKeys = append(basketItemsKeys, k)
 	}
-	sort.Strings(basketItemsKeys)
+	//sort.Strings(basketItemsKeys)
 
 	for _, productId := range basketItemsKeys {
 		item := basket.Items[productId]
