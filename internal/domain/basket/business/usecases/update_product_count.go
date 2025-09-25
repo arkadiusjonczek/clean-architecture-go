@@ -88,13 +88,13 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 	}
 
 	var actions map[string]string
-	if product.Stock < basketItem.Count+input.Count {
+	if product.Stock < input.Count {
 		basketItem.Count = product.Stock
 		actions = map[string]string{
 			"product_stock": fmt.Sprintf("Product %s stock is too low to add %d. Updated basket item count to %d.", input.ProductID, input.Count, product.Stock),
 		}
 	} else {
-		basketItem.Count += input.Count
+		basketItem.Count = input.Count
 	}
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Basket</title>
+    </head>
+    <body>
+        <h1>Basket</h1>
+        {{ if .message }}
+        <p>{{ .message }}</p>
+        {{ end }}
+        {{ if .userBasket }}
+        {{ if .userBasket.Items }}
+        {{ range .userBasket.Items }}
+            <p>{{ .Count }} x {{ .Product.Name }} @ {{ .Product.Price.Value }} {{ .Product.Price.Currency }}</p>
+        {{ end }}
+        {{ else }}
+        <p>The basket is empty.</p>
+        {{ end }}
+        {{ end }}
+    </body>
+</html>

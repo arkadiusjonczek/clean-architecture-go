@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/common"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -43,7 +44,7 @@ func NewBasketController(
 }
 
 func (controller *BasketControllerImpl) ShowBasket(c *gin.Context) {
-	userID := getUserID(c)
+	userID := common.GetUserID()
 
 	output, err := controller.ShowBasketUseCase.Execute(
 		&usecases.ShowBasketUseCaseInput{
@@ -61,7 +62,7 @@ func (controller *BasketControllerImpl) ShowBasket(c *gin.Context) {
 }
 
 func (controller *BasketControllerImpl) ClearBasket(c *gin.Context) {
-	userID := getUserID(c)
+	userID := common.GetUserID()
 
 	output, err := controller.ClearBasketUseCase.Execute(
 		&usecases.ClearBasketUseCaseInput{
@@ -79,7 +80,7 @@ func (controller *BasketControllerImpl) ClearBasket(c *gin.Context) {
 }
 
 func (controller *BasketControllerImpl) AddProduct(c *gin.Context) {
-	userID := getUserID(c)
+	userID := common.GetUserID()
 	productID := c.Param("productID")
 	count := c.Param("count")
 	if count == "" {
@@ -112,7 +113,7 @@ func (controller *BasketControllerImpl) AddProduct(c *gin.Context) {
 }
 
 func (controller *BasketControllerImpl) UpdateProductCount(c *gin.Context) {
-	userID := getUserID(c)
+	userID := common.GetUserID()
 	productID := c.Param("productID")
 	count := c.Param("count")
 
@@ -142,7 +143,7 @@ func (controller *BasketControllerImpl) UpdateProductCount(c *gin.Context) {
 }
 
 func (controller *BasketControllerImpl) RemoveProduct(c *gin.Context) {
-	userID := getUserID(c)
+	userID := common.GetUserID()
 	productID := c.Param("productID")
 
 	output, err := controller.RemoveProductUseCase.Execute(

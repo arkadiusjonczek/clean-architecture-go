@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/web"
 	"log"
 	"net/http"
 	"os"
@@ -74,16 +75,19 @@ func startHTTPServer() {
 	// create interface adapters
 
 	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
+	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
 	})
 
-	basketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, updateProductCountUseCase, removeProductUseCase)
+	webBasketController := web.NewBasketController(showBasketUseCase)
+	webBasketControllerRouter := web.NewBasketControllerRouter(webBasketController)
+	webBasketControllerRouter.RegisterRoutes(router)
 
-	basketControllerRouter := rest.NewBasketControllerRouter(basketController)
-	basketControllerRouter.RegisterRoutes(router)
+	restBasketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, updateProductCountUseCase, removeProductUseCase)
+	restBasketControllerRouter := rest.NewBasketControllerRouter(restBasketController)
+	restBasketControllerRouter.RegisterRoutes(router)
 
 	// start http server
 
