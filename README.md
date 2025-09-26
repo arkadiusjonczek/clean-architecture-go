@@ -40,7 +40,11 @@ The following layers "Adapters" and "Drivers" are separated.
 
 #### Adapters
 
-The implemented adapters are a full REST API   
+The implemented adapters are a full REST API and a web adapters only for the show basket use case.
+
+#### Drivers
+
+The implemented drivers are inmemory drivers, but for the basket there is also a MongoDB driver.
 
 ## Start application
 
@@ -50,7 +54,7 @@ The implemented adapters are a full REST API
 go run ./cmd/server
 ```
 
-#### Start application using Docker
+### Start application using Docker
 
 First build the docker image:
 

@@ -2,6 +2,7 @@ package usecases
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
@@ -67,6 +68,8 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 	if userBasketErr != nil {
 		return nil, err
 	}
+
+	log.Printf("add userBasket: %+v", userBasket)
 
 	product, productRepositoryErr := useCase.productRepository.Find(input.ProductID)
 	if productRepositoryErr != nil {

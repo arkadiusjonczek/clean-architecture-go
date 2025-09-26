@@ -1,10 +1,9 @@
 package web
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/common"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
+	"github.com/gin-gonic/gin"
 )
 
 type BasketController interface {

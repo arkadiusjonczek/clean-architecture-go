@@ -2,8 +2,6 @@ package usecases
 
 import (
 	"fmt"
-	"log"
-
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/dto"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 )
@@ -52,7 +50,7 @@ func (useCase *ShowBasketUseCaseImpl) Execute(input *ShowBasketUseCaseInput) (*S
 
 	userBasket, userBasketErr := useCase.basketService.FindOrCreate(input.UserID)
 	if userBasketErr != nil {
-		return nil, err
+		return nil, userBasketErr
 	}
 
 	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)
@@ -63,8 +61,6 @@ func (useCase *ShowBasketUseCaseImpl) Execute(input *ShowBasketUseCaseInput) (*S
 	output := &ShowBasketUseCaseOutput{
 		UserBasket: userBasketDTO,
 	}
-
-	log.Printf("output: %v", output)
 
 	return output, nil
 }

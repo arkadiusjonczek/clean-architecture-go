@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
+
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,8 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/rest"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/web"
@@ -16,6 +20,7 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
+	basketdrivermongodb "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/mongodb"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 	warehousehelper "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/usecases/helper"
 	warehousedriverinmemory "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/drivers/inmemory"
@@ -30,7 +35,31 @@ func startHTTPServer() {
 
 	// create drivers
 
-	basketRepository := inmemory.NewInMemoryBasketRepository()
+	var basketRepository entities.BasketRepository
+
+	switch os.Getenv("DRIVER") {
+	case "mongodb":
+		fmt.Printf("Driver: MongoDB\n")
+
+		clientOpts := options.Client().ApplyURI("mongodb://localhost:27017")
+		mongoClient, mongoClientErr := mongo.Connect(clientOpts)
+		if mongoClientErr != nil {
+			panic(mongoClientErr)
+		}
+		defer func() {
+			if mongoClientErr = mongoClient.Disconnect(context.TODO()); mongoClientErr != nil {
+				panic(mongoClientErr)
+			}
+		}()
+
+		basketsCollection := mongoClient.Database("ecommerce").Collection("baskets")
+
+		basketRepository = basketdrivermongodb.NewMongoBasketRepository(basketsCollection)
+	default:
+		fmt.Printf("Driver: InMemory\n")
+
+		basketRepository = inmemory.NewInMemoryBasketRepository()
+	}
 
 	productRepository := warehousedriverinmemory.NewInMemoryProductRepository()
 	productRepository.Save(
@@ -63,7 +92,7 @@ func startHTTPServer() {
 				Value:    13.99,
 				Currency: "EUR",
 			},
-			Stock: 0,
+			Stock: 30,
 		},
 	)
 	productRepository.Save(
@@ -74,7 +103,7 @@ func startHTTPServer() {
 				Value:    14.99,
 				Currency: "EUR",
 			},
-			Stock: 40,
+			Stock: 0,
 		},
 	)
 	productRepository.Save(
@@ -85,7 +114,7 @@ func startHTTPServer() {
 				Value:    15.99,
 				Currency: "EUR",
 			},
-			Stock: 0,
+			Stock: 50,
 		},
 	)
 
