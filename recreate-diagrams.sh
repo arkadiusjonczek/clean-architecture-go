@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -it -v $PWD:$PWD plantuml/plantuml -tsvg $PWD/*.diagram
+docker run -it -v $PWD:$PWD plantuml/plantuml -tsvg $PWD/*.plantuml

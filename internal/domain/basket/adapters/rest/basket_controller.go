@@ -1,11 +1,11 @@
 package rest
 
 import (
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/common"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/common"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
 )
 

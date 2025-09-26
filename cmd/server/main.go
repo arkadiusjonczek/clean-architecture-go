@@ -124,8 +124,15 @@ func startHTTPServer() {
 
 	// start http server
 
+	addr := os.Getenv("HTTP_ADDR")
+	if addr == "" {
+		addr = "localhost:8080"
+	}
+
+	fmt.Printf("Starting server on %s\n", addr)
+
 	httpServer := &http.Server{
-		Addr:    "localhost:8080",
+		Addr:    addr,
 		Handler: router,
 	}
 

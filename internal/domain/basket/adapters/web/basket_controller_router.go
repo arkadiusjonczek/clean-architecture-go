@@ -1,10 +1,15 @@
 package web
 
 import (
+	"embed"
 	"fmt"
+	"html/template"
 
 	"github.com/gin-gonic/gin"
 )
+
+//go:embed templates/*
+var templatesFS embed.FS
 
 type BasketControllerRouter interface {
 	RegisterRoutes(router *gin.Engine) error
@@ -27,7 +32,9 @@ func (controllerRouter *BasketControllerRouterImpl) RegisterRoutes(router *gin.E
 		return fmt.Errorf("router is nil")
 	}
 
-	router.LoadHTMLGlob("internal/domain/basket/adapters/web/templates/*")
+	templ := template.Must(template.New("").ParseFS(templatesFS, "templates/*.html"))
+	router.SetHTMLTemplate(templ)
+
 	router.GET("/", controllerRouter.basketController.ShowBasket)
 
 	return nil
