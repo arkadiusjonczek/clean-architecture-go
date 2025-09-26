@@ -16,13 +16,27 @@ Source: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.
 
 ![](usecase-diagram.svg)
 
-### Data Model
+### ER Diagram
 
-todo
+Simple Model:
+
+![](er-diagram-simple.svg)
+
+With adapted Basket:
+
+![](er-diagram-adapted.svg)
 
 ### Implementation
 
-todo
+The project-structure is based on http://github.com/golang-standards/project-layout
+
+All code, except the `cmd` entrypoints, is "hidden" inside the `internal` directory.
+
+Using a domain-driven design approach, the domains are separated inside the `domain` directory.
+
+The "Entities" and "Use Cases" layers are combined inside the `business` directory.
+
+The following layers "Adapters" and "Drivers" are separated.
 
 ## Start application
 
@@ -70,7 +84,7 @@ DELETE /basket/:productId
 DELETE /basket
 ```
 
-If you use `curl` in the shell, you can use `jq` to prettify the output.
+If you use `curl` in the shell, you can use [jq](https://github.com/jqlang/jq) to prettify the output.
 
 #### Show Basket
 
