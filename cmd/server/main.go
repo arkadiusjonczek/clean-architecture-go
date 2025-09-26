@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/web"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/rest"
+	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/adapters/web"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
@@ -34,7 +34,7 @@ func startHTTPServer() {
 	productRepository := inmemory.NewInMemoryProductRepository()
 	productRepository.Save(
 		&warehouse.Product{
-			ID:   "1",
+			ID:   "A12341",
 			Name: "Product 1",
 			Price: &warehouse.ProductPrice{
 				Value:    11.99,
@@ -45,13 +45,46 @@ func startHTTPServer() {
 	)
 	productRepository.Save(
 		&warehouse.Product{
-			ID:   "2",
+			ID:   "A12342",
 			Name: "Product 2",
 			Price: &warehouse.ProductPrice{
 				Value:    12.99,
 				Currency: "EUR",
 			},
 			Stock: 20,
+		},
+	)
+	productRepository.Save(
+		&warehouse.Product{
+			ID:   "A12343",
+			Name: "Product 3",
+			Price: &warehouse.ProductPrice{
+				Value:    13.99,
+				Currency: "EUR",
+			},
+			Stock: 0,
+		},
+	)
+	productRepository.Save(
+		&warehouse.Product{
+			ID:   "A12344",
+			Name: "Product 4",
+			Price: &warehouse.ProductPrice{
+				Value:    14.99,
+				Currency: "EUR",
+			},
+			Stock: 40,
+		},
+	)
+	productRepository.Save(
+		&warehouse.Product{
+			ID:   "A12345",
+			Name: "Product 5",
+			Price: &warehouse.ProductPrice{
+				Value:    15.99,
+				Currency: "EUR",
+			},
+			Stock: 0,
 		},
 	)
 
