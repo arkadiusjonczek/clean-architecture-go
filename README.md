@@ -73,7 +73,7 @@ If you want to interact with the basket please use the REST API described in the
 
 ### REST API
 
-The REST API fully implements all basket use cases.
+The REST API fully implements all basket use cases:
 
 ```shell
 GET /basket
