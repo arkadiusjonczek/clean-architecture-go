@@ -18,6 +18,7 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 	warehousehelper "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/usecases/helper"
+	warehousedriverinmemory "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/drivers/inmemory"
 )
 
 func main() {
@@ -31,7 +32,7 @@ func startHTTPServer() {
 
 	basketRepository := inmemory.NewInMemoryBasketRepository()
 
-	productRepository := inmemory.NewInMemoryProductRepository()
+	productRepository := warehousedriverinmemory.NewInMemoryProductRepository()
 	productRepository.Save(
 		&warehouse.Product{
 			ID:   "A12341",
