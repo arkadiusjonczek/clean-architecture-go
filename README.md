@@ -38,6 +38,10 @@ The "Entities" and "Use Cases" layers are combined inside the `business` directo
 
 The following layers "Adapters" and "Drivers" are separated.
 
+#### Adapters
+
+The implemented adapters are a full REST API   
+
 ## Start application
 
 ### Start application using Go
