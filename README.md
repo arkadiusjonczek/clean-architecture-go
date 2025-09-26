@@ -4,7 +4,7 @@ This is an example implementation of an ecommerce basket
 using Uncle Bobs' Clean Architecture.
 
 Please keep in mind that this is a demo application
-and some things would be implemented differently a real world application.
+and some things would be implemented differently in a real world application.
 
 ![Clean Architecture Diagram](CleanArchitecture.jpg)
 
