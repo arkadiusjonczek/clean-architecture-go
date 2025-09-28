@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Basket</title>
+    </head>
+    <body>
+        <h1>Basket</h1>
+        {{ if .message }}
+        <p>{{ .message }}</p>
+        {{ end }}
+        {{ if .userBasket }}
+        {{ if .userBasket.Items }}
+        <table border="1">
+            <tr>
+                <th>Count</th>
+                <th>Product</th>
+                <th>Price</th>
+            </tr>
+        {{ range .userBasket.Items }}
+            <tr>
+                <td>{{ .Count }}</td>
+                <td>{{ .Product.Name }}</td>
+                <td>{{ .Product.Price.Value }} {{ .Product.Price.Currency }}</td>
+            </tr>
+        {{ end }}
+        </table>
+        {{ else }}
+        <p>The basket is empty.</p>
+        {{ end }}
+        {{ end }}
+    </body>
+</html>

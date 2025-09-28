@@ -1,0 +1,35 @@
+@startchen
+
+left to right direction
+
+entity User {
+}
+entity Basket {
+}
+
+relationship owns {
+}
+
+User -1- owns
+owns -1- Basket
+
+entity BasketItem {
+    Count
+}
+
+relationship contains {
+}
+
+Basket -1- contains
+contains -N- BasketItem
+
+relationship is {
+}
+
+entity Product {
+}
+
+BasketItem -N- is
+is -1- Product
+
+@endchen

@@ -1,0 +1,9 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:8.0-ubi8
+    environment:
+#      - MONGODB_INITDB_ROOT_USERNAME=admin
+#      - MONGODB_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=ecommerce
+    ports:
+      - "27017:27017"
