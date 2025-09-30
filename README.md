@@ -28,23 +28,45 @@ With adapted Basket:
 
 ### Implementation
 
-The project-structure is based on http://github.com/golang-standards/project-layout
+The golang project-structure is based on http://github.com/golang-standards/project-layout
 
-All code, except the `cmd` entrypoints, is "hidden" inside the `internal` directory.
+All code, except the `cmd` entrypoint, is "hidden" inside the `internal` directory.
 
 Using a domain-driven design approach, the domains are separated inside the `domain` directory.
 
-The "Entities" and "Use Cases" layers are combined inside the `business` directory.
+The high-level layers "Entities" and "Use Cases" are combined inside the `business` directory.
 
-The following layers "Adapters" and "Drivers" are separated.
+The low-level layers "Adapters" and "Drivers" are separated.
+
+#### Entities
+
+The entities are stored inside this layer.
+
+Also, there are Factory classes
+to create new entities and Repository classes
+to retrieve entities from the data layer and save entities into the data layer.
+
+#### Use Cases
+
+The use cases are stored inside this layer.
+
+Every Use Case has a separate class which improves the readability and understandability.
+
+Also, there are additional Service classes containing more business logic.
+
+And for the output, there are some "Data Transfer Object" (DTO) classes. 
 
 #### Adapters
 
-The implemented adapters are a full REST API and a web adapters only for the show basket use case.
+The interface adapters are stored inside this layer.
+
+The implemented adapters are a full REST API and a web adapters, but only for the "Show Basket" use case.
 
 #### Drivers
 
-The implemented drivers are inmemory drivers, but for the basket there is also a MongoDB driver.
+The drivers are stored inside this layer.
+
+The implemented drivers are an in-memory driver, but for the basket there is also a MongoDB driver.
 
 ## Start application
 
@@ -81,13 +103,13 @@ If you want to interact with the basket please use the REST API described in the
 
 ### REST API
 
-The REST API fully implements all basket use cases:
+The REST API fully implements all basket use cases with the following routes:
 
 ```shell
-GET /basket
-POST /basket/:productId
-POST /basket/:productId/:count
-PATCH /basket/:productId/:count
+GET    /basket
+POST   /basket/:productId
+POST   /basket/:productId/:count
+PATCH  /basket/:productId/:count
 DELETE /basket/:productId
 DELETE /basket
 ```
