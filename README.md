@@ -1,12 +1,9 @@
-# clean-architecture-go
+# Clean Architecture (Go)
 
 This is an example implementation of an E-Commerce basket 
-using Uncle Bobs' Clean Architecture.
+using Uncle Bobs' Clean Architecture written in Go.
 
-Please keep in mind that this is a demo application
-and some things would be implemented differently in a real world application.
-
-![Clean Architecture Diagram](CleanArchitecture.jpg)
+![Clean Architecture Diagram](docs/CleanArchitecture.jpg)
 
 Source: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html
 
@@ -14,25 +11,25 @@ Source: https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.
 
 ### Use Case Diagram
 
-![](usecase-diagram.svg)
+![](docs/usecase-diagram.svg)
 
 ### ER Diagram
 
 Simple Model:
 
-![](er-diagram-simple.svg)
+![](docs/er-diagram-simple.svg)
 
 With adapted Basket:
 
-![](er-diagram-adapted.svg)
+![](docs/er-diagram-adapted.svg)
 
 ### Implementation
 
-The golang project-structure is based on http://github.com/golang-standards/project-layout
+The golang project structure is based on http://github.com/golang-standards/project-layout.
 
 All code, except the `cmd` entrypoint, is "hidden" inside the `internal` directory.
 
-Using a domain-driven design approach, the domains are separated inside the `domain` directory.
+Using a domain-driven design approach, the domains are separated inside the `internal/domain` directory.
 
 The high-level layers "Entities" and "Use Cases" are combined inside the `business` directory.
 
@@ -98,8 +95,7 @@ The web implementation only shows the basket. (first use case)
 
 To view it, open http://localhost:8080/ in your web browser.
 
-If you want to interact with the basket please use the REST API described in the following section.
-
+If you want to interact with the basket, please use the REST API described in the following section.
 
 ### REST API
 
