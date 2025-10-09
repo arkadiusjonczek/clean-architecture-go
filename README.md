@@ -78,13 +78,13 @@ go run ./cmd/server
 First build the docker image:
 
 ```shell
-./build.sh
+./docker-build.sh
 ```
 
 Then run the docker container using the built image:
 
 ```shell
-./run.sh
+./docker-run.sh
 ```
 
 ## Usage
