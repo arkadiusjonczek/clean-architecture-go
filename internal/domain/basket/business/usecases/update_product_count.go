@@ -77,14 +77,15 @@ func (useCase *UpdateProductCountUseCaseImpl) Execute(input *UpdateProductCountU
 		return nil, fmt.Errorf("product %s is out of stock", input.ProductID)
 	}
 
-	basketItem, basketItemExists := userBasket.Items[input.ProductID]
-	if !basketItemExists {
-		basketItem = &entities.BasketItem{
-			ProductID: product.ID,
-			Count:     0,
-		}
-
-		userBasket.Items[input.ProductID] = basketItem
+	var basketItem *entities.BasketItem
+	if !userBasket.HasItem(input.ProductID) {
+		// add the product with count = 0
+		// because of the following product stock check
+		// which will set the correct count
+		// related to the available stock
+		basketItem = userBasket.AddItem(input.ProductID, 0)
+	} else {
+		basketItem, _ = userBasket.GetItem(input.ProductID)
 	}
 
 	var actions map[string]string

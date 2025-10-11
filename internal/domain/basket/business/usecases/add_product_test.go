@@ -80,21 +80,18 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 
 	basketRepositoryMock := entities.NewMockBasketRepository(ctrl)
 
-	userBasket, err := basketFactory.NewBasket(userID)
-	userBasket.ID = basketID // set basket id, otherwise a new basket will be created
+	// create basket woth basket id, otherwise a new basket will be created
+	userBasket, err := basketFactory.NewBasketWithID(userID, basketID)
 	require.NoError(t, err)
 
 	basketRepositoryMock.EXPECT().FindByUserId(userID).Return(userBasket, nil)
-	basketRepositoryMock.EXPECT().Save(&entities.Basket{
-		ID:     basketID,
-		UserID: userID,
-		Items: map[string]*entities.BasketItem{
-			product1ID: {
-				ProductID: product1ID,
-				Count:     1,
-			},
-		},
-	}).Return(basketID, nil)
+
+	basket, basketErr := basketFactory.NewBasketWithID(userID, basketID)
+	require.NoError(t, basketErr)
+
+	basket.AddItem(product1ID, 1)
+
+	basketRepositoryMock.EXPECT().Save(basket).Return(basketID, nil)
 
 	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
 	productRepositoryMock.EXPECT().Find(product1ID).Return(product1, nil).Times(2) // first the usecase, second in the basket output service

@@ -35,13 +35,13 @@ func (service *BasketOutputServiceImpl) CreateBasketDTO(basket *entities.Basket)
 
 	// order guarantee
 	basketItemsKeys := make([]string, 0)
-	for k, _ := range basket.Items {
+	for k, _ := range basket.GetItems() {
 		basketItemsKeys = append(basketItemsKeys, k)
 	}
 	//sort.Strings(basketItemsKeys)
 
 	for _, productId := range basketItemsKeys {
-		item := basket.Items[productId]
+		item, _ := basket.GetItem(productId)
 
 		product, productRepositoryErr := service.productRepository.Find(item.ProductID)
 		if productRepositoryErr != nil {

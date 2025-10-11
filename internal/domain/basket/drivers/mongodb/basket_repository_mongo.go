@@ -29,11 +29,11 @@ func (repository *MongoBasketRepository) Save(basket *entities.Basket) (string, 
 		return "", fmt.Errorf("basket is nil")
 	}
 
-	if basket.ID == "" {
-		basket.ID = uuid.NewString()
+	if basket.GetID() == "" {
+		basket.SetID(uuid.NewString())
 	}
 
-	result, replaceErr := repository.collection.ReplaceOne(context.Background(), bson.M{"id": basket.ID}, basket)
+	result, replaceErr := repository.collection.ReplaceOne(context.Background(), bson.M{"id": basket.GetID()}, basket)
 	if replaceErr != nil {
 		return "", replaceErr
 	}
@@ -45,7 +45,7 @@ func (repository *MongoBasketRepository) Save(basket *entities.Basket) (string, 
 		}
 	}
 
-	return basket.ID, nil
+	return basket.GetID(), nil
 }
 
 func (repository *MongoBasketRepository) Find(id string) (*entities.Basket, error) {

@@ -25,13 +25,13 @@ func (repository *InMemoryBasketRepository) Save(basket *entities.Basket) (strin
 		return "", fmt.Errorf("basket is nil")
 	}
 
-	if basket.ID == "" {
-		basket.ID = uuid.NewString()
+	if basket.GetID() == "" {
+		basket.SetID(uuid.NewString())
 	}
 
-	repository.baskets[basket.ID] = basket
+	repository.baskets[basket.GetID()] = basket
 
-	return basket.ID, nil
+	return basket.GetID(), nil
 }
 
 func (repository *InMemoryBasketRepository) Find(id string) (*entities.Basket, error) {
@@ -45,7 +45,7 @@ func (repository *InMemoryBasketRepository) Find(id string) (*entities.Basket, e
 
 func (repository *InMemoryBasketRepository) FindByUserId(userId string) (*entities.Basket, error) {
 	for _, basket := range repository.baskets {
-		if basket.UserID == userId {
+		if basket.GetUserID() == userId {
 			return basket, nil
 		}
 	}

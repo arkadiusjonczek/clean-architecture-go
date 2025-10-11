@@ -70,20 +70,11 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 		return nil, productRepositoryErr
 	}
 
-	//basketItemCount := input.Count
-	//// TODO: check for product stock in warehouse
-	//if product.Stock < basketItemCount {
-	//	return nil, fmt.Errorf("product stock is not enough")
-	//}
+	userBasket.RemoveItem(input.ProductID)
 
-	_, basketItemExists := userBasket.Items[input.ProductID]
-	if basketItemExists {
-		delete(userBasket.Items, input.ProductID)
-
-		_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
-		if basketRepositorySaveErr != nil {
-			return nil, basketRepositorySaveErr
-		}
+	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
+	if basketRepositorySaveErr != nil {
+		return nil, basketRepositorySaveErr
 	}
 
 	userBasketDTO, basketOutputServiceErr := useCase.basketOutputService.CreateBasketDTO(userBasket)

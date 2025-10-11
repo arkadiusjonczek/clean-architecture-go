@@ -59,8 +59,7 @@ func (useCase *ClearBasketUseCaseImpl) Execute(input *ClearBasketUseCaseInput) (
 		return nil, err
 	}
 
-	// clear the basket by replacing the map
-	userBasket.Items = make(map[string]*entities.BasketItem)
+	userBasket.Clear()
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
 	if basketRepositorySaveErr != nil {
