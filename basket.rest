@@ -2,7 +2,27 @@ GET http://localhost:8080/basket
 
 ###
 
+POST http://localhost:8080/basket/A12345
 
+###
+
+POST http://localhost:8080/basket/A12344
+
+###
+
+POST http://localhost:8080/basket/A12343
+
+###
+
+POST http://localhost:8080/basket/A12343/2
+
+###
+
+PATCH http://localhost:8080/basket/A12345/2
+
+###
+
+DELETE http://localhost:8080/basket/A12343
 
 ###
 
