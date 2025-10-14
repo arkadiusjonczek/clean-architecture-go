@@ -8,8 +8,8 @@ type Basket struct {
 	items  map[string]*BasketItem
 }
 type BasketItem struct {
-	ProductID string
-	Count     int
+	productID string
+	count     int
 }
 
 func (basket *Basket) GetID() string {
@@ -45,11 +45,11 @@ func (basket *Basket) GetItem(productID string) (*BasketItem, error) {
 func (basket *Basket) AddItem(productID string, count int) *BasketItem {
 	basketItem, basketHasItem := basket.items[productID]
 	if basketHasItem {
-		basketItem.Count += count
+		basketItem.count += count
 	} else {
 		basketItem = &BasketItem{
-			ProductID: productID,
-			Count:     count,
+			productID: productID,
+			count:     count,
 		}
 
 		basket.items[productID] = basketItem
@@ -72,4 +72,16 @@ func (basket *Basket) Clear() {
 	if len(basket.items) > 0 {
 		basket.items = map[string]*BasketItem{}
 	}
+}
+
+func (basketItem *BasketItem) GetProductID() string {
+	return basketItem.productID
+}
+
+func (basketItem *BasketItem) GetCount() int {
+	return basketItem.count
+}
+
+func (basketItem *BasketItem) SetCount(count int) {
+	basketItem.count = count
 }
