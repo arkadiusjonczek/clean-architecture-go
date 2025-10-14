@@ -43,7 +43,7 @@ func (service *BasketOutputServiceImpl) CreateBasketDTO(basket *entities.Basket)
 	for _, productId := range basketItemsKeys {
 		item, _ := basket.GetItem(productId)
 
-		product, productRepositoryErr := service.productRepository.Find(item.ProductID)
+		product, productRepositoryErr := service.productRepository.Find(item.GetProductID())
 		if productRepositoryErr != nil {
 			return nil, productRepositoryErr
 		}
@@ -59,7 +59,7 @@ func (service *BasketOutputServiceImpl) CreateBasketDTO(basket *entities.Basket)
 
 		basketItem := &dto.BasketItem{
 			Product: basketProduct,
-			Count:   item.Count,
+			Count:   item.GetCount(),
 		}
 
 		basketDTO.Items = append(basketDTO.Items, basketItem)

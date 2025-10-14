@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"fmt"
+
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
