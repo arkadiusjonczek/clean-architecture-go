@@ -11,7 +11,7 @@ type BasketController interface {
 }
 
 type BasketControllerImpl struct {
-	usecases.ShowBasketUseCase
+	ShowBasketUseCase usecases.ShowBasketUseCase
 }
 
 func NewBasketController(showBasketUseCase usecases.ShowBasketUseCase) BasketController {

@@ -46,11 +46,11 @@ func (useCase *UpdateProductCountUseCaseImpl) validate(input *UpdateProductCount
 	if input == nil {
 		return fmt.Errorf("input is nil")
 	} else if input.UserID == "" {
-		return fmt.Errorf("UserID is empty")
+		return fmt.Errorf("input parameter UserID is empty")
 	} else if input.ProductID == "" {
-		return fmt.Errorf("ProductID is empty")
+		return fmt.Errorf("input parameter ProductID is empty")
 	} else if input.Count <= 0 {
-		return fmt.Errorf("Count is invalid (must be greater than 0)")
+		return fmt.Errorf("input parameter Count is invalid (must be greater than 0)")
 	}
 
 	return nil

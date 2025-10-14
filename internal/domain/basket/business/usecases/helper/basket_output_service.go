@@ -35,7 +35,7 @@ func (service *BasketOutputServiceImpl) CreateBasketDTO(basket *entities.Basket)
 
 	// order guarantee
 	basketItemsKeys := make([]string, 0)
-	for k, _ := range basket.GetItems() {
+	for k := range basket.GetItems() {
 		basketItemsKeys = append(basketItemsKeys, k)
 	}
 	//sort.Strings(basketItemsKeys)

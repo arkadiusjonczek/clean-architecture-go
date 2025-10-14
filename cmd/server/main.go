@@ -26,10 +26,13 @@ import (
 )
 
 func main() {
-	startHTTPServer()
+	err := startHTTPServer()
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }
 
-func startHTTPServer() {
+func startHTTPServer() error {
 	fmt.Println("Starting server...")
 
 	// create drivers
@@ -145,11 +148,17 @@ func startHTTPServer() {
 
 	webBasketController := web.NewBasketController(showBasketUseCase)
 	webBasketControllerRouter := web.NewBasketControllerRouter(webBasketController)
-	webBasketControllerRouter.RegisterRoutes(router)
+	webBasketControllerRouterErr := webBasketControllerRouter.RegisterRoutes(router)
+	if webBasketControllerRouterErr != nil {
+		return webBasketControllerRouterErr
+	}
 
 	restBasketController := rest.NewBasketController(showBasketUseCase, clearBasketUseCase, addProductUseCase, updateProductCountUseCase, removeProductUseCase)
 	restBasketControllerRouter := rest.NewBasketControllerRouter(restBasketController)
-	restBasketControllerRouter.RegisterRoutes(router)
+	restBasketControllerRouterErr := restBasketControllerRouter.RegisterRoutes(router)
+	if restBasketControllerRouterErr != nil {
+		return restBasketControllerRouterErr
+	}
 
 	// start http server
 
@@ -170,7 +179,12 @@ func startHTTPServer() {
 			log.Fatalf("Failed to listen and serve: %v", err)
 		}
 	}()
-	defer httpServer.Close()
+	defer func(httpServer *http.Server) {
+		err := httpServer.Close()
+		if err != nil {
+			log.Fatalf("Failed to close server: %v", err)
+		}
+	}(httpServer)
 
 	// Wait for SIGINT (Ctrl+C) signal to exit
 	signals := make(chan os.Signal, 1)
@@ -178,4 +192,6 @@ func startHTTPServer() {
 	<-signals
 
 	fmt.Println("Stopping server...")
+
+	return nil
 }
