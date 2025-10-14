@@ -70,7 +70,7 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 		return nil, productRepositoryErr
 	}
 
-	userBasket.RemoveItem(input.ProductID)
+	_ = userBasket.RemoveItem(input.ProductID)
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
 	if basketRepositorySaveErr != nil {

@@ -40,19 +40,20 @@ func (service *ProductPriceSimulatorServiceImpl) Start() {
 }
 
 func (service *ProductPriceSimulatorServiceImpl) start() {
+outer:
 	for {
 		service.execute()
 
 		select {
 		case <-service.ctx.Done():
-			break
+			break outer
 		case <-time.After(PRODUCT_PRICE_SIMULATOR_WAIT_DURATION):
 		}
 	}
 }
 
 func (service *ProductPriceSimulatorServiceImpl) execute() {
-	plus := rand.Intn(1) == 0
+	plus := rand.Intn(2) == 0
 	for _, product := range service.productRepository.FindAll() {
 		change := rand.Float64() * 0.10
 		oldPrice := product.Price.Value
