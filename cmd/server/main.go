@@ -20,6 +20,7 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/usecases/helper"
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/inmemory"
 	basketdrivermongodb "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/mongodb"
+	basketdrivermysql "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/drivers/mysql"
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 	warehousehelper "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/usecases/helper"
 	warehousedriverinmemory "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/drivers/inmemory"
@@ -57,6 +58,51 @@ func startHTTPServer() error {
 		basketsCollection := mongoClient.Database("ecommerce").Collection("baskets")
 
 		basketRepository = basketdrivermongodb.NewMongoBasketRepository(basketsCollection)
+	case "mysql":
+		fmt.Printf("Driver: MySQL\n")
+
+		// Get MySQL configuration from environment variables
+		mysqlHost := os.Getenv("MYSQL_HOST")
+		if mysqlHost == "" {
+			mysqlHost = "localhost"
+		}
+		mysqlPort := os.Getenv("MYSQL_PORT")
+		if mysqlPort == "" {
+			mysqlPort = "3306"
+		}
+		mysqlUsername := os.Getenv("MYSQL_USERNAME")
+		if mysqlUsername == "" {
+			mysqlUsername = "root"
+		}
+		mysqlPassword := os.Getenv("MYSQL_PASSWORD")
+		if mysqlPassword == "" {
+			mysqlPassword = "password"
+		}
+		mysqlDatabase := os.Getenv("MYSQL_DATABASE")
+		if mysqlDatabase == "" {
+			mysqlDatabase = "ecommerce"
+		}
+
+		// Create MySQL database connection
+		config := basketdrivermysql.DatabaseConfig{
+			Host:     mysqlHost,
+			Port:     mysqlPort,
+			Username: mysqlUsername,
+			Password: mysqlPassword,
+			Database: mysqlDatabase,
+		}
+
+		mysqlDB, mysqlErr := basketdrivermysql.NewConnection(config)
+		if mysqlErr != nil {
+			panic(fmt.Errorf("failed to connect to MySQL: %w", mysqlErr))
+		}
+		defer func() {
+			if closeErr := mysqlDB.Close(); closeErr != nil {
+				log.Printf("Failed to close MySQL connection: %v", closeErr)
+			}
+		}()
+
+		basketRepository = basketdrivermysql.NewMySQLBasketRepository(mysqlDB)
 	default:
 		fmt.Printf("Driver: InMemory\n")
 

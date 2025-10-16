@@ -7,3 +7,18 @@ services:
       - MONGO_INITDB_DATABASE=ecommerce
     ports:
       - "27017:27017"
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=ecommerce
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./internal/domain/basket/drivers/mysql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  mysql_data:
