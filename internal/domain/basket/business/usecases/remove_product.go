@@ -65,12 +65,10 @@ func (useCase *RemoveProductUseCaseImpl) Execute(input *RemoveProductUseCaseInpu
 		return nil, err
 	}
 
-	_, productRepositoryErr := useCase.productRepository.Find(input.ProductID)
-	if productRepositoryErr != nil {
-		return nil, productRepositoryErr
+	userBasketErr = userBasket.RemoveItem(input.ProductID)
+	if userBasketErr != nil {
+		return nil, userBasketErr
 	}
-
-	_ = userBasket.RemoveItem(input.ProductID)
 
 	_, basketRepositorySaveErr := useCase.basketRepository.Save(userBasket)
 	if basketRepositorySaveErr != nil {

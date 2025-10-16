@@ -4,7 +4,7 @@ import "fmt"
 
 type BasketFactory interface {
 	NewBasket(UserID string) (*Basket, error)
-	NewBasketWithID(userID string, id string) (*Basket, error)
+	NewBasketWithID(basketID string, userID string) (*Basket, error)
 }
 
 var _ BasketFactory = (*BasketFactoryImpl)(nil)
@@ -27,15 +27,15 @@ func (factory *BasketFactoryImpl) NewBasket(userID string) (*Basket, error) {
 	}, nil
 }
 
-func (factory *BasketFactoryImpl) NewBasketWithID(userID string, id string) (*Basket, error) {
-	if userID == "" {
+func (factory *BasketFactoryImpl) NewBasketWithID(basketID string, userID string) (*Basket, error) {
+	if basketID == "" {
+		return nil, fmt.Errorf("basketID cannot be empty")
+	} else if userID == "" {
 		return nil, fmt.Errorf("userID cannot be empty")
-	} else if id == "" {
-		return nil, fmt.Errorf("id cannot be empty")
 	}
 
 	return &Basket{
-		id:     id,
+		id:     basketID,
 		userID: userID,
 		items:  map[string]*BasketItem{},
 	}, nil

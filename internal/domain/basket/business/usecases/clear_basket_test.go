@@ -11,26 +11,15 @@ import (
 	warehouse "github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
-func Test_AddProductToBasketUseCase_NewAddProductUseCaseImpl_ReturnsError(t *testing.T) {
+func Test_ClearBasketUseCase_NewClearBasketUseCaseImpl_ReturnsError(t *testing.T) {
 	testCases := map[string]struct {
-		input *AddProductUseCaseInput
+		input *ClearBasketUseCaseInput
 	}{
 		"input is nil": {
 			input: nil,
 		},
 		"UserID is empty": {
-			input: &AddProductUseCaseInput{},
-		},
-		"ProductID is empty": {
-			input: &AddProductUseCaseInput{
-				UserID: "1337",
-			},
-		},
-		"Count is invalid": {
-			input: &AddProductUseCaseInput{
-				UserID:    "1337",
-				ProductID: "1",
-			},
+			input: &ClearBasketUseCaseInput{},
 		},
 	}
 
@@ -46,7 +35,7 @@ func Test_AddProductToBasketUseCase_NewAddProductUseCaseImpl_ReturnsError(t *tes
 			basketCreatorService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
 			basketOutputService := helper.NewBasketOutputService(productRepositoryMock)
 
-			useCase := NewAddProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepositoryMock, productRepositoryMock)
+			useCase := NewClearBasketUseCaseImpl(basketCreatorService, basketOutputService, basketRepositoryMock)
 
 			_, err := useCase.Execute(testCase.input)
 
@@ -56,8 +45,7 @@ func Test_AddProductToBasketUseCase_NewAddProductUseCaseImpl_ReturnsError(t *tes
 	}
 }
 
-// TODO: Test also use cases like product not found, product out of stock etc.
-func Test_AddProductToBasketUseCase(t *testing.T) {
+func Test_ClearBasketUseCase(t *testing.T) {
 	// arrange
 
 	ctrl := gomock.NewController(t)
@@ -67,16 +55,6 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 	userID := "1337"
 
 	product1ID := "1"
-	product1Name := "Product 1"
-	product1 := &warehouse.Product{
-		ID:    product1ID,
-		Name:  product1Name,
-		Stock: 10,
-		Price: &warehouse.ProductPrice{
-			Value:    13.37,
-			Currency: "EUR",
-		},
-	}
 
 	basketFactory := entities.NewBasketFactory()
 
@@ -86,23 +64,21 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 	userBasket, err := basketFactory.NewBasketWithID(basketID, userID)
 	require.NoError(t, err)
 
+	userBasket.AddItem(product1ID, 1)
+
 	basketRepositoryMock.EXPECT().FindByUserId(userID).Return(userBasket, nil)
 	basketRepositoryMock.EXPECT().Save(userBasket).Return(basketID, nil)
 
 	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
-	// first the stock check in the usecase
-	// second in the basket output service
-	productRepositoryMock.EXPECT().Find(product1ID).Return(product1, nil).Times(2)
 
 	basketCreatorService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
+
 	basketOutputService := helper.NewBasketOutputService(productRepositoryMock)
 
-	useCase := NewAddProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepositoryMock, productRepositoryMock)
+	useCase := NewClearBasketUseCaseImpl(basketCreatorService, basketOutputService, basketRepositoryMock)
 
-	input := &AddProductUseCaseInput{
-		UserID:    userID,
-		ProductID: product1ID,
-		Count:     1,
+	input := &ClearBasketUseCaseInput{
+		UserID: userID,
 	}
 
 	// act
