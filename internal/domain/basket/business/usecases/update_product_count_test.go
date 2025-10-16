@@ -55,3 +55,65 @@ func Test_UpdateProductCount_NewUpdateProductCountImpl_ReturnsError(t *testing.T
 		})
 	}
 }
+
+// TODO: Test also use cases like product not found, product out of stock etc.
+func Test_UpdateProductCountUseCase(t *testing.T) {
+	// arrange
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	basketID := "12345"
+	userID := "1337"
+
+	product1ID := "1"
+	product1Name := "Product 1"
+	product1 := &warehouse.Product{
+		ID:    product1ID,
+		Name:  product1Name,
+		Stock: 10,
+		Price: &warehouse.ProductPrice{
+			Value:    13.37,
+			Currency: "EUR",
+		},
+	}
+
+	basketFactory := entities.NewBasketFactory()
+
+	basketRepositoryMock := entities.NewMockBasketRepository(ctrl)
+
+	// create basket with basket id, otherwise a new basket will be created
+	userBasket, err := basketFactory.NewBasketWithID(basketID, userID)
+	require.NoError(t, err)
+
+	userBasket.AddItem(product1ID, 1)
+
+	basketRepositoryMock.EXPECT().FindByUserId(userID).Return(userBasket, nil)
+	basketRepositoryMock.EXPECT().Save(userBasket).Return(basketID, nil)
+
+	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
+	// first the stock check in the usecase
+	// second in the basket output service
+	productRepositoryMock.EXPECT().Find(product1ID).Return(product1, nil).Times(2)
+
+	basketCreatorService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
+
+	basketOutputService := helper.NewBasketOutputService(productRepositoryMock)
+
+	useCase := NewUpdateProductCountImpl(basketCreatorService, basketOutputService, basketRepositoryMock, productRepositoryMock)
+
+	input := &UpdateProductCountUseCaseInput{
+		UserID:    userID,
+		ProductID: product1ID,
+		Count:     1,
+	}
+
+	// act
+
+	output, err := useCase.Execute(input)
+
+	// assert
+
+	require.NoError(t, err)
+	require.NotNil(t, output)
+}

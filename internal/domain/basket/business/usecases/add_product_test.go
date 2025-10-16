@@ -87,13 +87,7 @@ func Test_AddProductToBasketUseCase(t *testing.T) {
 	require.NoError(t, err)
 
 	basketRepositoryMock.EXPECT().FindByUserId(userID).Return(userBasket, nil)
-
-	basket, basketErr := basketFactory.NewBasketWithID(basketID, userID)
-	require.NoError(t, basketErr)
-
-	basket.AddItem(product1ID, 1)
-
-	basketRepositoryMock.EXPECT().Save(basket).Return(basketID, nil)
+	basketRepositoryMock.EXPECT().Save(userBasket).Return(basketID, nil)
 
 	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
 	// first the stock check in the usecase

@@ -49,3 +49,51 @@ func Test_RemoveProductUseCase_NewRemoveProductUseCaseImpl_ReturnsError(t *testi
 		})
 	}
 }
+
+// TODO: Test also use cases like product not found, product out of stock etc.
+func Test_RemoveProductFromBasketUseCase(t *testing.T) {
+	// arrange
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	basketID := "12345"
+	userID := "1337"
+
+	product1ID := "1"
+
+	basketFactory := entities.NewBasketFactory()
+
+	basketRepositoryMock := entities.NewMockBasketRepository(ctrl)
+
+	// create basket with basket id, otherwise a new basket will be created
+	userBasket, err := basketFactory.NewBasketWithID(basketID, userID)
+	require.NoError(t, err)
+
+	userBasket.AddItem(product1ID, 1)
+
+	basketRepositoryMock.EXPECT().FindByUserId(userID).Return(userBasket, nil)
+	basketRepositoryMock.EXPECT().Save(userBasket).Return(basketID, nil)
+
+	productRepositoryMock := warehouse.NewMockProductRepository(ctrl)
+
+	basketCreatorService := helper.NewBasketCreatorServiceImpl(basketFactory, basketRepositoryMock)
+
+	basketOutputService := helper.NewBasketOutputService(productRepositoryMock)
+
+	useCase := NewRemoveProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepositoryMock, productRepositoryMock)
+
+	input := &RemoveProductUseCaseInput{
+		UserID:    userID,
+		ProductID: product1ID,
+	}
+
+	// act
+
+	output, err := useCase.Execute(input)
+
+	// assert
+
+	require.NoError(t, err)
+	require.NotNil(t, output)
+}
