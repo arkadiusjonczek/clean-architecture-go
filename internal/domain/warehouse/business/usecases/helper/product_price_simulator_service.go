@@ -1,58 +1,37 @@
 package helper
 
+//go:generate mockgen -source=product_price_simulator_service.go -destination=product_price_simulator_service_mock.go -package=helper
+
 import (
-	"context"
+	"fmt"
 	"log"
 	"math/rand"
-	"time"
 
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/warehouse/business/entities"
 )
 
-const (
-	PRODUCT_PRICE_SIMULATOR_WAIT_DURATION = 10 * time.Second
-)
-
 // ProductPriceSimulatorService will make price changes to demonstrate the difference between Basket and BasketDTO
 type ProductPriceSimulatorService interface {
-	Start()
-	Stop()
+	Execute()
 }
 
 var _ ProductPriceSimulatorService = (*ProductPriceSimulatorServiceImpl)(nil)
 
 type ProductPriceSimulatorServiceImpl struct {
-	ctx               context.Context
 	productRepository entities.ProductRepository
 }
 
-func NewProductPriceSimulator(productRepository entities.ProductRepository) ProductPriceSimulatorService {
+func NewProductPriceSimulatorService(productRepository entities.ProductRepository) (ProductPriceSimulatorService, error) {
+	if productRepository == nil {
+		return nil, fmt.Errorf("productRepository is nil")
+	}
+
 	return &ProductPriceSimulatorServiceImpl{
-		ctx:               context.Background(),
 		productRepository: productRepository,
-	}
+	}, nil
 }
 
-// Start is not thread safe
-func (service *ProductPriceSimulatorServiceImpl) Start() {
-	log.Println("ProductPriceSimulatorService: Starting...")
-	go service.start()
-}
-
-func (service *ProductPriceSimulatorServiceImpl) start() {
-outer:
-	for {
-		service.execute()
-
-		select {
-		case <-service.ctx.Done():
-			break outer
-		case <-time.After(PRODUCT_PRICE_SIMULATOR_WAIT_DURATION):
-		}
-	}
-}
-
-func (service *ProductPriceSimulatorServiceImpl) execute() {
+func (service *ProductPriceSimulatorServiceImpl) Execute() {
 	plus := rand.Intn(2) == 0
 	for _, product := range service.productRepository.FindAll() {
 		change := rand.Float64() * 0.10
@@ -65,9 +44,4 @@ func (service *ProductPriceSimulatorServiceImpl) execute() {
 		log.Printf("ProductPriceSimulatorService: Updating Product %s price: %f (old price: %f)\n", product.ID, product.Price.Value, oldPrice)
 		service.productRepository.Save(product)
 	}
-}
-
-func (service *ProductPriceSimulatorServiceImpl) Stop() {
-	log.Println("ProductPriceSimulatorService: Stopping...")
-	service.ctx.Done()
 }

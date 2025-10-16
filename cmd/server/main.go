@@ -133,9 +133,20 @@ func startHTTPServer() error {
 	updateProductCountUseCase := usecases.NewUpdateProductCountImpl(basketCreatorService, basketOutputService, basketRepository, productRepository)
 	removeProductUseCase := usecases.NewRemoveProductUseCaseImpl(basketCreatorService, basketOutputService, basketRepository, productRepository)
 
-	productPriceSimulatorService := warehousehelper.NewProductPriceSimulator(productRepository)
-	productPriceSimulatorService.Start()
-	defer productPriceSimulatorService.Stop()
+	// simulate price changes
+
+	productPriceSimulatorService, productPriceSimulatorServiceErr := warehousehelper.NewProductPriceSimulatorService(productRepository)
+	if productPriceSimulatorServiceErr != nil {
+		return productPriceSimulatorServiceErr
+	}
+
+	productPriceSimulatorBackgroundService, productPriceSimulatorBackgroundServiceErr := warehousehelper.NewProductPriceSimulatorBackgroundService(productPriceSimulatorService)
+	if productPriceSimulatorBackgroundServiceErr != nil {
+		return productPriceSimulatorBackgroundServiceErr
+	}
+
+	productPriceSimulatorBackgroundService.Start()
+	defer productPriceSimulatorBackgroundService.Stop()
 
 	// create interface adapters
 

@@ -25,22 +25,22 @@ type AddProductUseCase interface {
 	Execute(input *AddProductUseCaseInput) (*AddProductUseCaseOutput, error)
 }
 
-func NewAddProductUseCaseImpl(basketService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
+func NewAddProductUseCaseImpl(basketCreatorService helper.BasketCreatorService, basketOutputService helper.BasketOutputService, basketRepository entities.BasketRepository, productRepository warehouse.ProductRepository) AddProductUseCase {
 	return &AddProductUseCaseImpl{
-		basketService:       basketService,
-		basketOutputService: basketOutputService,
-		basketRepository:    basketRepository,
-		productRepository:   productRepository,
+		basketCreatorService: basketCreatorService,
+		basketOutputService:  basketOutputService,
+		basketRepository:     basketRepository,
+		productRepository:    productRepository,
 	}
 }
 
 var _ AddProductUseCase = (*AddProductUseCaseImpl)(nil)
 
 type AddProductUseCaseImpl struct {
-	basketService       helper.BasketCreatorService
-	basketOutputService helper.BasketOutputService
-	basketRepository    entities.BasketRepository
-	productRepository   warehouse.ProductRepository
+	basketCreatorService helper.BasketCreatorService
+	basketOutputService  helper.BasketOutputService
+	basketRepository     entities.BasketRepository
+	productRepository    warehouse.ProductRepository
 }
 
 func (useCase *AddProductUseCaseImpl) validate(input *AddProductUseCaseInput) error {
@@ -64,7 +64,7 @@ func (useCase *AddProductUseCaseImpl) Execute(input *AddProductUseCaseInput) (*A
 		return nil, fmt.Errorf("input validation error: %w", err)
 	}
 
-	userBasket, userBasketErr := useCase.basketService.FindOrCreate(input.UserID)
+	userBasket, userBasketErr := useCase.basketCreatorService.FindOrCreate(input.UserID)
 	if userBasketErr != nil {
 		return nil, err
 	}
