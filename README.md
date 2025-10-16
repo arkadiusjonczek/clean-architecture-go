@@ -63,17 +63,105 @@ The implemented adapters are a full REST API and a web adapters, but only for th
 
 The drivers are stored inside this layer.
 
-The implemented drivers are an in-memory driver, but for the basket there is also a MongoDB driver.
+The implemented drivers are an in-memory driver, MongoDB driver, and MySQL driver for the basket.
 
 ## Start application
 
 ### Start application using Go
 
+#### In-Memory Driver (Default)
 ```shell
 go run ./cmd/server
 ```
 
+#### MongoDB Driver
+```shell
+DRIVER=mongodb go run ./cmd/server
+```
+
+#### MySQL Driver
+```shell
+# Set MySQL environment variables (optional - defaults shown)
+export MYSQL_HOST=localhost
+export MYSQL_PORT=3306
+export MYSQL_USERNAME=root
+export MYSQL_PASSWORD=password
+export MYSQL_DATABASE=ecommerce
+
+# Start with MySQL driver
+DRIVER=mysql go run ./cmd/server
+```
+
+**Note:** For MySQL, make sure to create the database and tables first by running:
+```shell
+mysql -u root -p < internal/domain/basket/drivers/mysql/schema.sql
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DRIVER` | `inmemory` | Database driver to use (`inmemory`, `mongodb`, `mysql`) |
+| `HTTP_ADDR` | `localhost:8080` | HTTP server address |
+| `MYSQL_HOST` | `localhost` | MySQL server host (when using MySQL driver) |
+| `MYSQL_PORT` | `3306` | MySQL server port (when using MySQL driver) |
+| `MYSQL_USERNAME` | `root` | MySQL username (when using MySQL driver) |
+| `MYSQL_PASSWORD` | `password` | MySQL password (when using MySQL driver) |
+| `MYSQL_DATABASE` | `ecommerce` | MySQL database name (when using MySQL driver) |
+
 ### Start application using Docker
+
+#### Option 1: Using Docker Compose (Recommended)
+
+**Quick Start Scripts:**
+
+```shell
+# Start with MySQL (includes database setup)
+./start-with-mysql.sh
+
+# Start with MongoDB
+./start-with-mongodb.sh
+
+# Start with in-memory (no database needed)
+./start-with-inmemory.sh
+```
+
+**Manual Setup:**
+
+Start the database services:
+
+```shell
+# Start MySQL and MongoDB services
+docker-compose up -d
+
+# Start the application with MySQL driver
+DRIVER=mysql go run ./cmd/server
+
+# Or start with MongoDB driver
+DRIVER=mongodb go run ./cmd/server
+```
+
+Stop the services when done:
+
+```shell
+docker-compose down
+```
+
+#### Docker Services
+
+The docker-compose.yaml file includes:
+
+- **MySQL 8.0**: Available on port 3306
+  - Database: `clean_architecture_go`
+  - Root password: `password`
+  - Automatically loads the schema.sql on first startup
+  - Data persisted in `mysql_data` volume
+
+- **MongoDB 8.0**: Available on port 27017
+  - Database: `ecommerce`
+  - No authentication required
+
+#### Option 2: Using Docker Build Scripts
 
 First build the docker image:
 
