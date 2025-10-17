@@ -3,33 +3,34 @@ package entities
 import "fmt"
 
 type Basket struct {
-	id     string
-	userID string
-	items  map[string]*BasketItem
+	Id     string
+	UserID string
+	Items  map[string]*BasketItem
 }
+
 type BasketItem struct {
-	productID string
-	count     int
+	ProductID string
+	Count     int
 }
 
 func (basket *Basket) GetID() string {
-	return basket.id
+	return basket.Id
 }
 
 func (basket *Basket) SetID(id string) {
-	basket.id = id
+	basket.Id = id
 }
 
 func (basket *Basket) GetUserID() string {
-	return basket.userID
+	return basket.UserID
 }
 
 func (basket *Basket) GetItems() map[string]*BasketItem {
-	return basket.items
+	return basket.Items
 }
 
 func (basket *Basket) HasItem(productID string) bool {
-	_, basketHasItem := basket.items[productID]
+	_, basketHasItem := basket.Items[productID]
 
 	return basketHasItem
 }
@@ -39,20 +40,20 @@ func (basket *Basket) GetItem(productID string) (*BasketItem, error) {
 		return nil, fmt.Errorf("basket does not have item with id: %s", productID)
 	}
 
-	return basket.items[productID], nil
+	return basket.Items[productID], nil
 }
 
 func (basket *Basket) AddItem(productID string, count int) *BasketItem {
-	basketItem, basketHasItem := basket.items[productID]
+	basketItem, basketHasItem := basket.Items[productID]
 	if basketHasItem {
-		basketItem.count += count
+		basketItem.Count += count
 	} else {
 		basketItem = &BasketItem{
-			productID: productID,
-			count:     count,
+			ProductID: productID,
+			Count:     count,
 		}
 
-		basket.items[productID] = basketItem
+		basket.Items[productID] = basketItem
 	}
 
 	return basketItem
@@ -63,25 +64,25 @@ func (basket *Basket) RemoveItem(productID string) error {
 		return fmt.Errorf("basket does not have item with id: %s", productID)
 	}
 
-	delete(basket.items, productID)
+	delete(basket.Items, productID)
 
 	return nil
 }
 
 func (basket *Basket) Clear() {
-	if len(basket.items) > 0 {
-		basket.items = map[string]*BasketItem{}
+	if len(basket.Items) > 0 {
+		basket.Items = map[string]*BasketItem{}
 	}
 }
 
 func (basketItem *BasketItem) GetProductID() string {
-	return basketItem.productID
+	return basketItem.ProductID
 }
 
 func (basketItem *BasketItem) GetCount() int {
-	return basketItem.count
+	return basketItem.Count
 }
 
 func (basketItem *BasketItem) SetCount(count int) {
-	basketItem.count = count
+	basketItem.Count = count
 }

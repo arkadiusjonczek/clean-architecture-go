@@ -22,8 +22,8 @@ func (factory *BasketFactoryImpl) NewBasket(userID string) (*Basket, error) {
 	}
 
 	return &Basket{
-		userID: userID,
-		items:  map[string]*BasketItem{},
+		UserID: userID,
+		Items:  map[string]*BasketItem{},
 	}, nil
 }
 
@@ -35,8 +35,8 @@ func (factory *BasketFactoryImpl) NewBasketWithID(basketID string, userID string
 	}
 
 	return &Basket{
-		id:     basketID,
-		userID: userID,
-		items:  map[string]*BasketItem{},
+		Id:     basketID,
+		UserID: userID,
+		Items:  map[string]*BasketItem{},
 	}, nil
 }
