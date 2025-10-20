@@ -54,7 +54,7 @@ func startHTTPServer() error {
 			}
 		}()
 
-		basketsCollection := mongoClient.Database("ecommerce").Collection("baskets")
+		basketsCollection := mongoClient.Database(basketdrivermongodb.DatabaseName).Collection(basketdrivermongodb.BasketsCollectionName)
 
 		basketRepository = basketdrivermongodb.NewMongoBasketRepository(basketsCollection)
 	default:

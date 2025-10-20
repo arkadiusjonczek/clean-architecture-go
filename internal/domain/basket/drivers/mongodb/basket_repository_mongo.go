@@ -12,6 +12,11 @@ import (
 	"github.com/arkadiusjonczek/clean-architecture-go/internal/domain/basket/business/entities"
 )
 
+const (
+	DatabaseName          = "ecommerce"
+	BasketsCollectionName = "baskets"
+)
+
 var _ entities.BasketRepository = (*MongoBasketRepository)(nil)
 
 type MongoBasketRepository struct {
